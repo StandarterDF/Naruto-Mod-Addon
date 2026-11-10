@@ -36,3 +36,8 @@ __pycache__/
 # Stray scratch notes at the repository root (version.txt is the real one)
 /*.txt
 !/version.txt
+
+# Mixin configs unpacked into the repository root by accident (the real ones live in src/main/resources)
+/mixins.narutoaddon.json
+/blockofsky-common.mixins.json
+
