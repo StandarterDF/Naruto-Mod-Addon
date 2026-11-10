@@ -1,0 +1,119 @@
+package com.sekwah.narutoaddon.client.renderer;
+
+import com.sekwah.narutoaddon.block.NarutoBlocks;
+import com.sekwah.narutoaddon.client.model.entity.SubstitutionLogModel;
+import com.sekwah.narutoaddon.client.model.item.model.*;
+import com.sekwah.narutoaddon.client.model.jutsu.FireballJutsuModel;
+import com.sekwah.narutoaddon.client.model.jutsu.WaterBulletModel;
+import com.sekwah.narutoaddon.client.renderer.entity.*;
+import com.sekwah.narutoaddon.client.renderer.entity.jutsuprojectile.FireballJutsuRenderer;
+import com.sekwah.narutoaddon.client.renderer.entity.jutsuprojectile.RasenshurikenJutsuRenderer;
+import com.sekwah.narutoaddon.client.renderer.entity.jutsuprojectile.ChakraOrbRenderer;
+import com.sekwah.narutoaddon.client.renderer.entity.jutsuprojectile.TailedBallRenderer;
+import com.sekwah.narutoaddon.client.renderer.entity.jutsuprojectile.TravellingArcRenderer;
+import com.sekwah.narutoaddon.client.renderer.entity.jutsuprojectile.WaterBulletJutsuRenderer;
+import com.sekwah.narutoaddon.entity.NarutoEntities;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.ThrownItemRenderer;
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+
+/**
+ * Example of new entity render events
+ * https://github.com/MinecraftForge/MinecraftForge/blob/1.17.x/src/test/java/net/minecraftforge/debug/client/rendering/EntityRendererEventsTest.java
+ */
+@Mod.EventBusSubscriber(value=Dist.CLIENT, modid="narutoaddon", bus= Mod.EventBusSubscriber.Bus.MOD)
+public class NarutoRenderEvents {
+
+    public static final BlockEntityWithoutLevelRenderer NARUTO_RENDERER = new NarutoResourceManager();
+
+    @SubscribeEvent
+    public static void entityRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerEntityRenderer(NarutoEntities.KUNAI.get(), KunaiRenderer::new);
+        event.registerEntityRenderer(NarutoEntities.EXPLOSIVE_KUNAI.get(), ExplosiveKunaiRenderer::new);
+        event.registerEntityRenderer(NarutoEntities.MINATO_KUNAI.get(), MinatoKunaiRenderer::new);
+        event.registerEntityRenderer(NarutoEntities.SENBON.get(), SenbonRenderer::new);
+        event.registerEntityRenderer(NarutoEntities.SHURIKEN.get(), ShurikenRenderer::new);
+        event.registerEntityRenderer(NarutoEntities.PAPER_BOMB.get(), PaperBombRenderer::new);
+
+        event.registerEntityRenderer(NarutoEntities.FIREBALL_JUTSU.get(), FireballJutsuRenderer::new);
+        event.registerEntityRenderer(NarutoEntities.WATER_BULLET_JUTSU.get(), WaterBulletJutsuRenderer::new);
+        event.registerEntityRenderer(NarutoEntities.RASENSHURIKEN_JUTSU.get(), RasenshurikenJutsuRenderer::new);
+        event.registerEntityRenderer(NarutoEntities.TAILED_BALL.get(), TailedBallRenderer::new);
+        event.registerEntityRenderer(NarutoEntities.CHAKRA_ORB.get(), ChakraOrbRenderer::new);
+        event.registerEntityRenderer(NarutoEntities.TRAVELLING_ARC.get(), TravellingArcRenderer::new);
+
+        event.registerEntityRenderer(NarutoEntities.SUBSTITUTION_LOG.get(), SubstitutionLogRenderer::new);
+
+        event.registerEntityRenderer(NarutoEntities.CHAKRA_MARKER.get(), ChakraMarkerRenderer::new);
+
+        event.registerEntityRenderer(NarutoEntities.SMOKE_CLOUD.get(), SmokeCloudRenderer::new);
+        event.registerEntityRenderer(NarutoEntities.SMOKE_BOMB.get(), ThrownItemRenderer::new);
+
+        event.registerEntityRenderer(NarutoEntities.CHIBAKU_TENSEI.get(), ChibakuTenseiRenderer::new);
+        event.registerEntityRenderer(NarutoEntities.DHARMA_CUBE.get(), DharmaCubeRenderer::new);
+        event.registerEntityRenderer(NarutoEntities.EARTH_WALL.get(), EarthWallBlockRenderer::new);
+
+        event.registerEntityRenderer(NarutoEntities.SHADOW_CLONE.get(), ShadowCloneRenderer::new);
+
+    }
+
+    @SubscribeEvent
+    public static void reloadListener(RegisterClientReloadListenersEvent event) {
+        event.registerReloadListener(new NarutoResourceManager());
+    }
+
+    /**
+     * The renderer context is the only way to bake a player model outside the vanilla registration,
+     * which is what henge needs to draw a disguised player with somebody else's skin. It is handed to
+     * {@link HengeRenderEvents} here and used lazily the first time a disguise is rendered.
+     */
+    @SubscribeEvent
+    public static void addLayers(EntityRenderersEvent.AddLayers event) {
+        HengeRenderEvents.setContext(event.getContext());
+        // The body-aura shell over both player models, wide and slim alike. Every stance that wraps
+        // the caster (cloaks, gates, sage mode, lightning, curse seal, six paths) is drawn by it.
+        for (String skin : event.getSkins()) {
+            var renderer = event.getSkin(skin);
+            if (renderer instanceof net.minecraft.client.renderer.entity.player.PlayerRenderer playerRenderer) {
+                playerRenderer.addLayer(new ModeAuraLayer(playerRenderer));
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void layerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event)
+    {
+        // Items
+        event.registerLayerDefinition(AnbuMaskModel.LAYER_LOCATION, () -> AnbuMaskModel.createLayer(true));
+        event.registerLayerDefinition(AnbuMaskModel.LAYER_LOCATION_WITHOUT_EARS, () -> AnbuMaskModel.createLayer(false));
+        event.registerLayerDefinition(HeadbandModel.LAYER_LOCATION, HeadbandModel::createLayer);
+
+        event.registerLayerDefinition(FlakJacketNewModel.LAYER_LOCATION, FlakJacketNewModel::createLayer);
+        event.registerLayerDefinition(FlakJacketModel.LAYER_LOCATION, FlakJacketModel::createLayer);
+        event.registerLayerDefinition(AnbuArmorModel.LAYER_LOCATION, AnbuArmorModel::createLayer);
+        event.registerLayerDefinition(AkatsukiCloakModel.LAYER_LOCATION, AkatsukiCloakModel::createLayer);
+
+        // Jutsu
+        event.registerLayerDefinition(FireballJutsuModel.LAYER_LOCATION, FireballJutsuModel::createLayer);
+        event.registerLayerDefinition(WaterBulletModel.LAYER_LOCATION, WaterBulletModel::createLayer);
+
+        // Entity
+        event.registerLayerDefinition(SubstitutionLogModel.LAYER_LOCATION, SubstitutionLogModel::createBodyLayer);
+    }
+
+/*    @SubscribeEvent
+    public static void entityLayers(EntityRenderersEvent.AddLayers event)
+    {
+        LivingEntityRenderer<Player, ? extends EntityModel<Player>> renderer = event.getRenderer(EntityType.PLAYER);
+    }*/
+
+
+}

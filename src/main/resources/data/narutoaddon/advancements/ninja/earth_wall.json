@@ -1,0 +1,26 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:dirt"
+    },
+    "title": {
+      "translate": "advancements.narutoaddon.ninja.earth_wall.title"
+    },
+    "description": {
+      "translate": "advancements.narutoaddon.ninja.earth_wall.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "cast": {
+      "trigger": "narutoaddon:jutsu_cast",
+      "conditions": {
+        "ability": "narutoaddon:earth_wall"
+      }
+    }
+  },
+  "parent": "narutoaddon:ninja/first_jutsu"
+}

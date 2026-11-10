@@ -1,0 +1,35 @@
+package com.sekwah.narutoaddon.gameevents;
+
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegistryObject;
+
+
+public class NarutoGameEvents {
+
+    public static final DeferredRegister<GameEvent> GAME_EVENTS = DeferredRegister.create(Registries.GAME_EVENT, "narutoaddon");
+
+    public static final RegistryObject<GameEvent> JUTSU_CASTING = GAME_EVENTS.register("jutsu_casting", () -> wardenAlert("jutsu_casting"));
+
+    /** A radius at or above this is treated as a blast rather than an ordinary cast. */
+    public static final int BOOM_RADIUS = 32;
+
+    /** The big techniques (rasengan, gates, kamui) carry much further than an ordinary cast. */
+    public static final RegistryObject<GameEvent> JUTSU_BOOM = GAME_EVENTS.register("jutsu_boom", () -> wardenAlert("jutsu_boom"));
+
+    public static final RegistryObject<GameEvent> LEAP = GAME_EVENTS.register("leap", () -> wardenAlert("leap"));
+
+    public static final RegistryObject<GameEvent> DOUBLE_JUMP = GAME_EVENTS.register("double_jump", () -> wardenAlert("double_jump"));
+
+    public static GameEvent wardenAlert(String name) {
+        return new GameEvent(name, 16);
+    }
+
+
+    public static void register(IEventBus eventBus) {
+        GAME_EVENTS.register(eventBus);
+    }
+}

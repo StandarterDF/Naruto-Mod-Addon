@@ -1,0 +1,46 @@
+modLoader="javafml"
+loaderVersion="[41,)"
+license="MIT"
+issueTrackerURL="https://github.com/StandarterDF/Naruto-Mod-Addon/issues"
+
+[[mods]]
+    modId="narutoaddon"
+    version="1.0.0"
+    displayName="Naruto Mod Addon"
+    authors="StandarterDF"
+    credits="Sekwah41 - creator of the base NarutoMod this addon extends and requires"
+    displayURL="https://github.com/StandarterDF/Naruto-Mod-Addon"
+    description='''
+An addon for Sekwah41's Naruto Mod for Minecraft 1.20.1 (Forge).
+
+Adds extra techniques, items and tweaks on top of the base mod. The base mod and
+SekCLib are required and are not bundled with this addon.
+'''
+
+[[dependencies.narutoaddon]]
+    modId="forge"
+    mandatory=true
+    versionRange="[46,48)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.narutoaddon]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.20,1.21)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.narutoaddon]]
+    modId="sekclib"
+    mandatory=true
+    versionRange="[1.0.0,2)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.narutoaddon]]
+    modId="narutomod"
+    mandatory=true
+    versionRange="[1.8.1,)"
+    ordering="AFTER"
+    side="BOTH"

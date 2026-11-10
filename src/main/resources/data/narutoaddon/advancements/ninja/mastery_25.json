@@ -1,0 +1,26 @@
+{
+  "display": {
+    "icon": {
+      "item": "narutoaddon:chakra_battery"
+    },
+    "title": {
+      "translate": "advancements.narutoaddon.ninja.mastery_25.title"
+    },
+    "description": {
+      "translate": "advancements.narutoaddon.ninja.mastery_25.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "mastered": {
+      "trigger": "narutoaddon:mastery",
+      "conditions": {
+        "level": 25
+      }
+    }
+  },
+  "parent": "narutoaddon:ninja/first_jutsu"
+}

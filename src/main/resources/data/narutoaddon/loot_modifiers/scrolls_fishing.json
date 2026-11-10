@@ -1,0 +1,27 @@
+{
+  "type": "narutoaddon:add_loot",
+  "conditions": [
+    { "condition": "forge:loot_table_id", "loot_table_id": "minecraft:gameplay/fishing" }
+  ],
+  "entries": [
+    { "item": "narutoaddon:scroll_rasengan", "weight": 3 },
+    { "item": "narutoaddon:scroll_sage_mode", "weight": 2 },
+    { "item": "narutoaddon:scroll_eight_gates", "weight": 2 },
+    { "item": "narutoaddon:scroll_rasenshuriken", "weight": 1 },
+    { "item": "narutoaddon:scroll_kamui", "weight": 1 },
+    { "item": "narutoaddon:scroll_sharingan", "weight": 2 },
+    { "item": "narutoaddon:scroll_byakugan", "weight": 2 },
+    { "item": "narutoaddon:scroll_senrigan", "weight": 2 },
+    { "item": "narutoaddon:scroll_senrigan_sight", "weight": 1 },
+    { "item": "narutoaddon:scroll_senrigan_flight", "weight": 1 },
+    { "item": "narutoaddon:scroll_senrigan_evasion", "weight": 1 },
+    { "item": "narutoaddon:scroll_senrigan_guidance", "weight": 1 },
+    { "item": "narutoaddon:scroll_kotoamatsukami", "weight": 1 },    { "item": "narutoaddon:scroll_rinnegan", "weight": 1 },
+    { "item": "narutoaddon:scroll_chibaku_tensei", "weight": 1 },
+    { "item": "narutoaddon:scroll_kirin", "weight": 1 }
+  ],
+  "chance": 0.015,
+  "luck_bonus": 0.01,
+  "min": 1,
+  "max": 1
+}

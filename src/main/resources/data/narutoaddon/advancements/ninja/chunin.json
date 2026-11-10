@@ -1,0 +1,31 @@
+{
+  "display": {
+    "icon": {
+      "item": "narutomod:flak_jacket"
+    },
+    "title": {
+      "translate": "advancements.narutoaddon.ninja.chunin.title"
+    },
+    "description": {
+      "translate": "advancements.narutoaddon.ninja.chunin.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "chunin": {
+      "trigger": "narutoaddon:ninja_rank",
+      "conditions": {
+        "rank": "chunin"
+      }
+    }
+  },
+  "parent": "narutoaddon:ninja/root",
+  "rewards": {
+    "recipes": [
+      "narutoaddon:chakra_battery"
+    ]
+  }
+}

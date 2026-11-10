@@ -1,0 +1,411 @@
+import org.apache.http.HttpEntity
+import org.apache.http.client.methods.CloseableHttpResponse
+import org.apache.http.client.methods.HttpPost
+import org.apache.http.entity.ContentType
+import org.apache.http.entity.mime.MultipartEntityBuilder
+import org.apache.http.impl.client.CloseableHttpClient
+import org.apache.http.impl.client.HttpClients
+
+buildscript {
+    repositories {
+        maven { url = "https://repo.spongepowered.org/maven" }
+        //maven { url = 'https://sizableshrimp.me/maven' }
+        maven { url = "https://plugins.gradle.org/m2/" }
+        maven { url = "https://maven.parchmentmc.org" }
+        mavenCentral()
+    }
+    dependencies {
+        // Exact versions, not dynamic ranges: a range makes Gradle re-check the repositories
+        // (and fail after timeouts when there is no internet) even though the artifacts are
+        // already in the local cache. See run-dev-client.bat / run-dev-server.bat.
+        classpath "org.spongepowered:mixingradle:0.7.38"
+        classpath "org.apache.httpcomponents:httpmime:4.5.14"
+        classpath "org.parchmentmc:librarian:1.2.0.7-dev-SNAPSHOT"
+    }
+}
+plugins {
+    id "com.modrinth.minotaur" version "2.10.0"
+    id "com.matthewprenger.cursegradle" version "1.4.0"
+    id 'net.neoforged.gradle' version '6.0.21'
+}
+
+apply plugin: "java"
+apply plugin: 'eclipse'
+apply plugin: 'org.parchmentmc.librarian.forgegradle'
+apply plugin: 'maven-publish'
+
+apply plugin: "org.spongepowered.mixin"
+
+def branch = System.getenv("GITHUB_REF")
+def snapshotName = null;
+if(branch != null) {
+    branch = branch.replace('refs/heads/', '')
+}
+def isRelease = System.getenv("IS_RELEASE") == "true"
+
+snapshotName = (branch == null || branch.startsWith("release-please")) ? "SNAPSHOT" : branch
+def githubSha = System.getenv("GITHUB_SHA")
+def shaRef = githubSha != null ? "-${githubSha.substring(0, 8)}" : ""
+
+println "Branch ${branch}${shaRef} isRelease: '${isRelease}'"
+
+// Get version from file managed by please-release
+// Strip both CR and LF: on Windows git checks version.txt out with CRLF and a leftover \r
+// makes the jar file name invalid.
+def versionString = (file('./version.txt').text + (isRelease ? "" : "-${snapshotName}${shaRef}")).replaceAll(/[\r\n]/, '')
+setVersion(versionString)
+println "Version: ${getVersion()}"
+
+group = project.package // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = project.archive
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+repositories {
+    maven { url = "https://maven.sekwah.com" }
+    maven {
+        url "https://www.cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+    // Where the JEI jar for the dev runs is pulled from - see the dependency below. (JEI also lives
+    // on maven.blamejared.com, but that one can crawl; Modrinth serves the same jar off a CDN.)
+    maven { url = "https://api.modrinth.com/maven" }
+}
+
+println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
+minecraft {
+    // The mappings can be changed at any time, and must be in the following format.
+    // snapshot_YYYYMMDD   Snapshot are built nightly.
+    // stable_#            Stables are built at the discretion of the MCP team.
+    // Use non-default mappings at your own risk. they may not always work.
+    // Simply re-run your setup task after changing the mappings to update your workspace.
+    mappings channel: 'official', version: '1.20.1'
+    //mappings channel: 'parchment', version: '2021.12.19-1.18.1'
+    //mappings channel: 'parchment', version: '2021.07.21-1.17'
+
+    // This is for personal local tests i was doing ignore it ;)
+    //mappings channel: 'snapshot', version: '20200706-unofficialtest-1.16.1'
+
+    // Readd if access transformers needed
+    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
+    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
+
+    // Default run configurations.
+    // These can be tweaked, removed, or duplicated as needed.
+    runs {
+        client {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            //property 'forge.logging.markers', 'SCAN,REGISTR
+            //version=1.2.1ES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
+
+            mods {
+                "${project.modid}" {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        // Second client for multiplayer testing. It must inherit from the stock client run:
+        // NeoGradle only fills main class, JVM module flags and the launch-target args for the
+        // built-in run names (client/server/data), so a bare custom run has an empty main class
+        // and fails with "No main class specified". The parent merge (RunConfig#mergeParents)
+        // copies all of that in, and the settings below override just the game directory and user.
+        clientAlt {
+            parent(null, 'client')
+
+            workingDirectory project.file('run2')
+
+            property 'forge.logging.console.level', 'debug'
+
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
+
+            args '--username', 'Dev2'
+
+            mods {
+                "${project.modid}" {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', ''
+            //property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                "${project.modid}" {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        data {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', ''
+            //property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            args '--mod', project.modid, '--all', '--output', file('src/generated/resources/')
+
+            mods {
+                "${project.modid}" {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+// Datagen (runData) regenerates files that are also maintained by hand in
+// src/main/resources (e.g. assets/minecraft/atlases/blocks.json, data/
+// damage_type/*.json): every CI build runs runData, so both copies land on
+// the resources path. Keep the hand-maintained one (first source dir wins)
+// instead of failing the build.
+tasks.withType(AbstractCopyTask).configureEach {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+dependencies {
+
+    // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
+    // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
+    // The userdev artifact is a special name and will get all sorts of transformations applied to it.
+    minecraft 'net.neoforged:forge:1.20.1-47.1.62'
+
+    implementation 'org.spongepowered:mixin:0.8.5'
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+
+    implementation fg.deobf("com.sekwah:sekclib-forge:1.0.2-SNAPSHOT")
+
+    // Base mod (required at runtime; used here only for compiling against its API).
+    // Two sources, in this order:
+    //  1. libs/NarutoMod-1.20-1.8.1-deobf.jar - a local copy (offline dev; never committed);
+    //  2. the CurseForge file for NarutoMod 1.20-1.8.1 - fetched by Gradle, so a fresh clone
+    //     builds without shipping anyone else's jar inside this repository.
+    // The published jar never contains the base mod: it stays a plain compile dependency.
+    def baseModJar = file('libs/NarutoMod-1.20-1.8.1-deobf.jar')
+    if (baseModJar.exists()) {
+        implementation fg.deobf(files(baseModJar))
+    } else {
+        implementation fg.deobf('curse.maven:sekwah41s-naruto-mod-225298:4684253')
+    }
+
+    // Just Enough Items, for the dev runs only: a convenience for looking up recipes and item uses
+    // while testing the mod, not something the mod itself depends on. runtimeOnly keeps it off the
+    // compile classpath, so no mod code can accidentally start building on the JEI API, and out of
+    // the published jars. It is loaded by the dev runs like any other mod on the classpath.
+    runtimeOnly fg.deobf("maven.modrinth:jei:15.71.0.224")
+    // Trick intellij to allow for better editing in here for the discord task
+    // compile "org.apache.httpcomponents:httpmime:4.5.13"
+    //implementation fg.deobf("curse.maven:torohealth-damage-indicators-245733:3556931")
+//    implementation fg.deobf("curse.maven:jei-238222:3592081")
+//    implementation fg.deobf("curse.maven:configured-457570:3559398")
+//    implementation fg.deobf("curse.maven:jade-324717:3614180")
+
+    //implementation fg.deobf("curse.maven:hwyla:${project.hwyla_fileid}")
+
+    //include('org.ow2.asm:asm-debug-all:5.2')
+
+    // You may put jars on which you depend on in ./libs or you may define them like so..
+    // compile "some.group:artifact:version:classifier"
+    // compile "some.group:artifact:version"
+
+    // Real examples
+    // compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
+    // compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
+
+    // For more info...
+    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
+    // http://www.gradle.org/docs/current/userguide/dependency_management.html
+
+}
+
+mixin {
+    add sourceSets.main, "mixins.${project.modid}.refmap.json"
+
+    debug.verbose = true
+    debug.export = true
+}
+
+// Example for how to get properties into the manifest for reading by the runtime..
+jar {
+    finalizedBy 'reobfJar'
+    archiveClassifier = 'universal'
+    archiveBaseName = "${archivesBaseName}${project.mc_version}"
+    manifest {
+        attributes([
+                "Specification-Title": project.modid,
+                "Specification-Vendor": project.vendor,
+                "Specification-Version": "1", // We are version 1 of ourselves
+                "Implementation-Title": project.name,
+                "Implementation-Version": "${versionString}",
+                "Implementation-Vendor" :project.vendor,
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                "MixinConfigs": "mixins.${project.modid}.json"
+        ])
+    }
+}
+
+// Example configuration to allow publishing using the maven-publish task
+// we define a custom artifact that is sourced from the reobfJar output task
+// and then declare that to be published
+// Note you'll need to add a repository here
+def reobfFile = file("$buildDir/reobfJar/output.jar")
+def reobfArtifact = artifacts.add('default', reobfFile) {
+    type 'jar'
+    builtBy 'reobfJar'
+}
+
+task srcJar(type: Jar) {
+    build.dependsOn it
+    from sourceSets.main.allSource
+    archiveClassifier = 'sources'
+    archiveBaseName = "${archivesBaseName}${project.mc_version}"
+    from file("LICENSE")
+}
+
+task deobfJar(type: Jar) {
+    build.dependsOn it
+    from sourceSets.main.output
+    archiveClassifier = 'deobf'
+    archiveBaseName = "${archivesBaseName}${project.mc_version}"
+    from file("LICENSE")
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact reobfArtifact
+            artifact srcJar
+        }
+    }
+    // No repository configured on purpose: the jar is published through CurseForge/Modrinth.
+    // Add a `repositories { maven { url "..." } }` block here if you set up your own maven.
+}
+
+def getReleaseChangelog() {
+    def changelogFile = file('CHANGELOG.md')
+    def changelog = "## [${changelogFile.text.split('\n## \\[')[1]}\n\n"// ${project.github}/blob/${branch}/CHANGELOG.md
+    return changelog;
+}
+
+/**
+ * For pre-releases and testers to be able to try the latest commits if they want.
+ * If the builds start exceeding 8MB then we may want to upload to s3 instead and periodically clear.
+ * TODO possibly add a task that announces when builds are made?
+ * Though add a note that it may take a while for Curse to approve the files.
+ */
+task discordupload {
+    dependsOn(jar)
+    doLast {
+        String discordWebhook = System.getenv("DISCORD_WEBHOOK")
+
+        if (discordWebhook != null && !discordWebhook.isEmpty()) {
+
+            CloseableHttpClient httpClient = HttpClients.createDefault()
+            HttpPost uploadFile = new HttpPost(discordWebhook)
+
+            MultipartEntityBuilder builder = MultipartEntityBuilder.create()
+            if(!isRelease) {
+                builder.addTextBody("content", "New snapshot or testing build")
+            } else {
+                builder.addTextBody("content", "New release build\n" +
+                        "```markdown\n" +
+                        "${getReleaseChangelog()}\n" +
+                        "```")
+            }
+
+            var name = jar.archiveBaseName.get() + "-" + jar.archiveVersion.get() + ".jar"
+
+            builder.addBinaryBody("file", file(jar.archiveFile).newInputStream(), ContentType.APPLICATION_OCTET_STREAM, name)
+
+            HttpEntity multipart = builder.build()
+
+            uploadFile.setEntity(multipart)
+            CloseableHttpResponse response = httpClient.execute(uploadFile)
+            response.getEntity()
+
+            println("Posted build")
+
+        } else {
+            println("Discord webhook unspecified")
+        }
+    }
+}
+
+tasks.curseforge.enabled = System.getenv("CURSE_API") != null && !System.getenv("CURSE_API").isEmpty()
+
+// Resolved outside the plugin closures: inside them "project" means the plugin's model, not the Gradle project.
+def curseProjectId = (findProperty('curse_project_id') ?: '').toString().trim()
+def curseProjectSlug = (findProperty('curse_project_slug') ?: '').toString().trim()
+def modrinthSlug = (findProperty('modrinth_slug') ?: '').toString().trim()
+
+curseforge {
+    logger.info("Curse api: " + System.getenv("CURSE_API"))
+    if (System.getenv("CURSE_API") != null && !System.getenv("CURSE_API").isEmpty()) {
+        apiKey = System.getenv("CURSE_API")
+    }
+    // No project block until a CurseForge project exists: cursegradle fails the whole
+    // configuration otherwise ("A CurseForge project was configured without an id").
+    if (curseProjectId || curseProjectSlug) {
+        project {
+            id = curseProjectId ?: curseProjectSlug
+            changelog = getReleaseChangelog()
+            changelogType = 'markdown'
+            releaseType = 'release'
+            addGameVersion '1.20'
+            addGameVersion '1.20.1'
+
+            relations {
+                requiredDependency 'sekclib'
+                requiredDependency 'sekwah41s-naruto-mod'
+            }
+
+            mainArtifact(jar){
+            }
+            addArtifact srcJar
+            addArtifact deobfJar
+        }
+    }
+}
+
+// https://github.com/modrinth/minotaur
+modrinth {
+    token = System.getenv("MODRINTH_TOKEN")
+    if (modrinthSlug) {
+        projectId = modrinthSlug
+    }
+    versionType = "release"
+    uploadFile = jar
+    additionalFiles = [srcJar, deobfJar]
+    gameVersions = ["1.20", "1.20.1"]
+    changelog = getReleaseChangelog()
+    dependencies {
+        required.project "sekclib"
+        // NarutoMod is required; add the Modrinth slug here once the project is registered there.
+    }
+}

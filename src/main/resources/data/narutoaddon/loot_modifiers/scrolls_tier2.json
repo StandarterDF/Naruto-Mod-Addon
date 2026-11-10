@@ -1,0 +1,38 @@
+{
+  "type": "narutoaddon:add_loot",
+  "conditions": [
+    {
+      "condition": "minecraft:any_of",
+      "terms": [
+        { "condition": "forge:loot_table_id", "loot_table_id": "minecraft:chests/stronghold_corridor" },
+        { "condition": "forge:loot_table_id", "loot_table_id": "minecraft:chests/stronghold_crossing" },
+        { "condition": "forge:loot_table_id", "loot_table_id": "minecraft:chests/stronghold_library" },
+        { "condition": "forge:loot_table_id", "loot_table_id": "minecraft:chests/nether_bridge" },
+        { "condition": "forge:loot_table_id", "loot_table_id": "minecraft:chests/bastion_other" },
+        { "condition": "forge:loot_table_id", "loot_table_id": "minecraft:chests/bastion_bridge" },
+        { "condition": "forge:loot_table_id", "loot_table_id": "minecraft:chests/bastion_hoglin_stable" },
+        { "condition": "forge:loot_table_id", "loot_table_id": "minecraft:chests/shipwreck_treasure" },
+        { "condition": "forge:loot_table_id", "loot_table_id": "minecraft:chests/village/village_weaponsmith" }
+      ]
+    }
+  ],
+  "entries": [
+    { "item": "narutoaddon:scroll_eight_gates", "weight": 3 },
+    { "item": "narutoaddon:scroll_sage_mode", "weight": 2 },
+    { "item": "narutoaddon:scroll_senrigan", "weight": 3 },
+    { "item": "narutoaddon:scroll_senrigan_sight", "weight": 2 },
+    { "item": "narutoaddon:scroll_senrigan_flight", "weight": 2 },
+    { "item": "narutoaddon:scroll_senrigan_evasion", "weight": 2 },
+    { "item": "narutoaddon:scroll_senrigan_guidance", "weight": 2 },
+    { "item": "narutoaddon:scroll_senrigan_pulse", "weight": 2 },
+    { "item": "narutoaddon:scroll_senrigan_freecam", "weight": 2 },
+    { "item": "narutoaddon:scroll_senrigan_deathmark", "weight": 2 },
+    { "item": "narutoaddon:scroll_senrigan_deathstep", "weight": 2 },
+    { "item": "narutoaddon:scroll_senrigan_world", "weight": 2 },
+    { "item": "narutoaddon:scroll_kotoamatsukami", "weight": 2 }
+  ],
+  "chance": 0.18,
+  "luck_bonus": 0.06,
+  "min": 1,
+  "max": 1
+}

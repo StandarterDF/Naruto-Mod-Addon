@@ -1,0 +1,38 @@
+# Minecraft/Forge sources unpacked for reading (not part of the mod)
+/.mc_sources/
+/.base_sources/
+
+# Build output
+/build/
+/run/
+/run2/
+/tmp/
+/.gradle/
+/.ruff_cache/
+/.cache/
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Third-party mod binaries and jars unpacked from them: never commit someone else's code.
+# libs/ holds NarutoMod/SekCLib jars used only to compile against; a fresh clone fetches the
+# base mod from CurseForge instead (see build.gradle).
+/libs/
+/assets/
+/data/
+/models/
+/META-INF/
+/narutologo.png
+/mixins.narutomod.json
+/mixins.narutoaddon.refmap.json
+/pack.mcmeta
+*.log
+
+# Local tooling / assistant state
+/.opencode-web.env
+
+# Stray scratch notes at the repository root (version.txt is the real one)
+/*.txt
+!/version.txt

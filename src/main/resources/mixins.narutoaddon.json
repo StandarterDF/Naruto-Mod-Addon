@@ -1,0 +1,26 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "compatibilityLevel": "JAVA_17",
+  "package": "com.sekwah.narutoaddon.mixin",
+  "refmap": "mixins.narutoaddon.refmap.json",
+  "mixins": [
+    "common.AbstractArrowAccessor",
+    "common.AbstractFurnaceAccessor",
+    "common.BaseNinjaDataCapacityMixin",
+    "common.BasePacketChannelVersionMixin",
+    "common.CampfireAccessor",
+    "common.LivingEntityJumpingAccessor",
+    "common.PlayerDimensionsMixin",
+    "common.PlayerJumpPowerMixin",
+    "common.GameEventDispatcherMixin",
+    "common.ProjectileCanHitMixin",
+    "common.ToggleAbilityDataGateMixin",
+    "common.TripWireBlockMixin",
+    "common.SenriganFortuneMixin"
+  ],
+  "client": ["client.BaseKeyHandlerAccessor", "client.CameraSizeMixin", "client.ComboModifierMixin", "client.FreecamCameraMixin", "client.KeyHandlerMixin", "client.LocalPlayerMixin", "client.PlayerModelMixin", "client.PlayerRendererScaleMixin"],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

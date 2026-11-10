@@ -1,0 +1,26 @@
+{
+    "targets": [
+        "byakugan_grade"
+    ],
+    "passes": [
+        {
+            "name": "color_convolve",
+            "intarget": "minecraft:main",
+            "outtarget": "byakugan_grade",
+            "uniforms": [
+                { "name": "Gray",        "values": [ 0.299, 0.587, 0.114 ] },
+                { "name": "RedMatrix",   "values": [ 0.19, 0.176, 0.034 ] },
+                { "name": "GreenMatrix", "values": [ 0.108, 0.311, 0.041 ] },
+                { "name": "BlueMatrix",  "values": [ 0.165, 0.323, 0.163 ] },
+                { "name": "Offset",      "values": [ 0.006, 0.012, 0.028 ] },
+                { "name": "ColorScale",  "values": [ 1.15, 1.15, 1.15 ] },
+                { "name": "Saturation",  "values": [ 1.0 ] }
+            ]
+        },
+        {
+            "name": "blit",
+            "intarget": "byakugan_grade",
+            "outtarget": "minecraft:main"
+        }
+    ]
+}

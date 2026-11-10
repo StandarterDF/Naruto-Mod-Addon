@@ -1,0 +1,89 @@
+package com.sekwah.narutoaddon.abilities.utility;
+
+import com.sekwah.narutoaddon.abilities.Ability;
+import com.sekwah.narutoaddon.abilities.AbilityUnlocks;
+import com.sekwah.narutoaddon.abilities.NarutoAbilities;
+import com.sekwah.narutoaddon.abilities.mastery.Mastery;
+import com.sekwah.narutoaddon.capabilities.INinjaData;
+import com.sekwah.narutoaddon.skills.SkillTree;
+import com.sekwah.narutoaddon.triggers.NarutoAdvancements;
+import com.sekwah.narutoaddon.gameevents.NarutoGameEvents;
+import com.sekwah.narutoaddon.sounds.NarutoSounds;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.player.Player;
+
+public class DoubleJumpAbility extends Ability {
+
+    public static final float CHAKRA_COST = 2f;
+    public static final float STAMINA_COST = 5f;
+
+    @Override
+    public ActivationType activationType() {
+        return ActivationType.INSTANT;
+    }
+
+    @Override
+    public boolean logInChat() {
+        return false;
+    }
+
+    @Override
+    public SoundEvent castingSound() {
+        return null;
+    }
+
+    @Override
+    public SoundEvent castingFailSound() {
+        return null;
+    }
+
+    @Override
+    public boolean handleCost(Player player, INinjaData ninjaData, int chargeAmount) {
+        if (!AbilityUnlocks.isUnlocked(ninjaData, NarutoAbilities.DOUBLE_JUMP.getId())) {
+            return false;
+        }
+        // The client refuses the jump on an empty bar, but this is the server's copy of the same
+        // rule: a leap has to be paid for, not borrowed.
+        if (ninjaData.getChakra() < this.masteryCost(ninjaData, CHAKRA_COST)
+                || ninjaData.getStamina() < STAMINA_COST) {
+            return false;
+        }
+        return ninjaData.getDoubleJumpData().canDoubleJumpServer;
+    }
+
+    @Override
+    public void recordMastery(Player player, INinjaData ninjaData) {
+        // Double jump is triggered on every second jump; slow its mastery down.
+        Mastery.recordCredit(player, ninjaData, this, 0.2f);
+        NarutoAdvancements.onTechniqueCast(player, ninjaData, this);
+        if (SkillTree.hasUnlock(ninjaData.getSkillData().getUnlocked(), "mechanic:residual_force")) {
+            player.getPersistentData().putLong("narutomod:residual_force_until",
+                    player.level().getGameTime() + 100L);
+        }
+    }
+
+    @Override
+    public void performServer(Player player, INinjaData ninjaData, int ticksActive) {
+        ninjaData.useChakra(this.masteryCost(ninjaData, CHAKRA_COST), 30);
+        ninjaData.useStamina(STAMINA_COST, 40);
+
+        if(player.level() instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(ParticleTypes.CLOUD,
+                    player.getX(),
+                    player.getY() + 0.1f,
+                    player.getZ(),
+                    35,
+                    0, 0, 0, 0.6F);
+        }
+        ninjaData.getDoubleJumpData().canDoubleJumpServer = false;
+        player.fallDistance = 0;
+
+        player.level().playSound(null,
+                player, com.sekwah.narutomod.sounds.NarutoSounds.DOUBLE_JUMP.get(), SoundSource.PLAYERS, 1f, 1.0f);
+
+        player.level().gameEvent(player, NarutoGameEvents.DOUBLE_JUMP.get(), player.position());
+    }
+}

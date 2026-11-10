@@ -1,0 +1,31 @@
+{
+  "display": {
+    "icon": {
+      "item": "narutomod:akatsuki_cloak"
+    },
+    "title": {
+      "translate": "advancements.narutoaddon.ninja.s_rank.title"
+    },
+    "description": {
+      "translate": "advancements.narutoaddon.ninja.s_rank.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "s_rank": {
+      "trigger": "narutoaddon:ninja_rank",
+      "conditions": {
+        "rank": "s_rank"
+      }
+    }
+  },
+  "parent": "narutoaddon:ninja/jonin",
+  "rewards": {
+    "recipes": [
+      "narutoaddon:kubikiribocho"
+    ]
+  }
+}

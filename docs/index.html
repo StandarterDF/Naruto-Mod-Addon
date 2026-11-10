@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Naruto Mod — вики (Minecraft 1.20.1 / Forge)</title>
+<meta name="description" content="Вики форка Sekwah's Naruto Mod для Minecraft 1.20.1 / Forge: техники на комбинациях клавиш, чакра и стамина, теневые клоны и рабочие, дерево скилов, освоение, карманное измерение Камуи. Все числа сверены с кодом версии 1.9.0.">
+<meta name="theme-color" content="#0d0e12">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/favicon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Naruto Mod — вики (Minecraft 1.20.1 / Forge)">
+<meta property="og:description" content="Техники, клоны, дерево скилов и освоение — по коду версии 1.9.0.">
+<meta property="og:image" content="assets/narutologo.png">
+<link rel="stylesheet" href="style.css?v=784d5948">
+<script src="app.js" defer></script>
+<script src="recipes-data.js" defer></script>
+<script src="craft.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#main">К содержимому</a>
+
+<header class="site-head">
+  <div class="site-head__inner">
+    <a class="brand" href="index.html">
+      <span class="brand__mark" aria-hidden="true">忍</span>
+      <span>Naruto Mod<span class="brand__sub">1.20.1 / Forge · вики форка</span></span>
+    </a>
+    <span class="site-head__spacer"></span>
+    <a class="head-link" href="techniques.html">Техники</a>
+    <a class="head-link" href="skills.html">Скилы</a>
+    <a class="head-link" href="faq.html">FAQ</a>
+    <div class="search" id="search">
+      <div class="search__field">
+        <span class="search__glyph" aria-hidden="true">⌕</span>
+        <input class="search__input" id="search-input" type="search" placeholder="Поиск: клоны, камуи, рецепт…" autocomplete="off" spellcheck="false" aria-label="Поиск по вики">
+        <span class="search__hint">Ctrl K</span>
+      </div>
+      <div class="search__panel" id="search-panel" role="listbox" aria-label="Результаты поиска"></div>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="side" aria-label="Разделы вики">
+    <nav>
+      <div class="side__group">
+        <div class="side__label">Начало</div>
+        <a class="side__link" href="index.html">Обзор</a>
+        <a class="side__link" href="install.html">Установка</a>
+      </div>
+      <div class="side__group">
+        <div class="side__label">Игра</div>
+        <a class="side__link" href="basics.html">Основы</a>
+        <a class="side__link" href="techniques.html">Техники</a>
+        <a class="side__link" href="clones.html">Клоны и рабочие</a>
+      </div>
+      <div class="side__group">
+        <div class="side__label">Развитие</div>
+        <a class="side__link" href="skills.html">Дерево скилов</a>
+        <a class="side__link" href="mastery.html">Освоение</a>
+      </div>
+      <div class="side__group">
+        <div class="side__label">Справочник</div>
+        <a class="side__link" href="items.html">Предметы и рецепты</a>
+        <a class="side__link" href="world.html">Мир и Камуи</a>
+        <a class="side__link" href="config.html">Настройки сервера</a>
+      </div>
+      <div class="side__group">
+        <div class="side__label">Ещё</div>
+        <a class="side__link" href="faq.html">Вопросы</a>
+      </div>
+    </nav>
+    <p class="side__note">Версия мода <strong>1.9.0</strong> · Minecraft 1.20.1 · Forge 47.1.62.<br>Числа на страницах — из кода, а не из старых версий.</p>
+  </aside>
+
+  <main class="doc" id="main">
+    <header class="doc__head">
+      <div class="doc__kicker">Вики форка · Naruto Mod</div>
+      <h1>Чакра, печати и клоны в Minecraft 1.20.1</h1>
+      <p class="doc__lead">
+        Это порт <strong>Sekwah's Naruto Mod</strong> на Minecraft 1.20.1 / Forge 47.1.62.
+        Техники здесь набираются <strong>последовательностью клавиш</strong> (комбо из C, V и B),
+        каждая тратит чакру или стамину, а теневые клоны копируют стиль боя кастера — вплоть до щита,
+        лука и бумажной бомбы. Дальше прогрессия: <a href="skills.html">дерево скилов</a> за очки навыка
+        (купленные за опыт) открывает сами техники и пассивки, а <a href="mastery.html">освоение</a> делает уже открытые
+        техники дешевле и быстрее от каждого каста.
+      </p>
+      <div class="doc__meta">
+        <span>Версия форка: 1.9.0</span>
+        <span>Minecraft 1.20.1</span>
+        <span>Forge 47.1.62</span>
+        <span>187 техник в реестре</span>
+        <span>347 узлов дерева скилов</span>
+        <span>71 рецепт</span>
+      </div>
+    </header>
+
+    <nav class="page-toc" aria-label="На этой странице">
+      <div class="page-toc__title">На этой странице</div>
+      <ol>
+        <li class="toc-l2"><a href="#start">С чего начать</a></li>
+        <li class="toc-l2"><a href="#how">Как это работает</a></li>
+        <li class="toc-l2"><a href="#keys">Клавиши</a></li>
+        <li class="toc-l2"><a href="#combo">Как читать комбо</a></li>
+        <li class="toc-l2"><a href="#map">Карта вики</a></li>
+      </ol>
+    </nav>
+
+    <section id="start">
+      <h2 id="s-start">С чего начать</h2>
+      <ol class="steps">
+        <li>Поставить мод — Forge 47.1.62 и сам <code>narutomod</code>. Подробности на странице
+          <a href="install.html">Установка</a>.</li>
+        <li>Зайти в мир и нажать <kbd>J</kbd> — это меню техник. Кнопка <strong>Become a ninja</strong>
+          включает ниндзя-режим. Без него техники не кастуются, а в чат приходит подсказка
+          «Чтобы это сделать, нужно стать ниндзя».</li>
+        <li>Зажать <kbd>C</kbd> (<span class="combo"><kbd>C</kbd></span> — «Заряд чакры») и постоять:
+          чакра копится в пул. По умолчанию в пуле всего <strong>25</strong> — этого хватает на пару
+          дешёвых техник.</li>
+        <li>В том же меню <kbd>J</kbd> открыть <strong>Skill Tree</strong> и купить входной узел
+          «Основа синоби» за очки навыка: <strong>+6 чакры, стамины и здоровья</strong> сразу. Очки
+          покупаются за опыт по курсу 10 опыта = 1 очко, а тратятся уже на узлы.</li>
+        <li>Дальше покупать ветки под свой стиль: сверху выбирается раздел (физический путь, стихии,
+          особые техники), под ним — ветка. Техники по умолчанию закрыты — их открывают узлы дерева, и
+          в меню <kbd>J</kbd> закрытые строки помечены суффиксом «закрыто».</li>
+      </ol>
+      <div class="callout callout--tip">
+        <div class="callout__title">Если коротко</div>
+        <p>Клавиши <kbd>C</kbd> <kbd>V</kbd> <kbd>B</kbd> — это «печати». Комбо из них — техника.
+        <kbd>X</kbd> — рывок, <kbd>J</kbd> — меню. Всё остальное — прогрессия: опыт → дерево скилов,
+        касты → освоение.</p>
+      </div>
+    </section>
+
+    <section id="how">
+      <h2 id="s-how">Как это работает</h2>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead>
+            <tr><th>Механика</th><th>По умолчанию</th><th>Где меняется</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Чакра</td>
+              <td>максимум <strong>25</strong>, регенерация <strong>0,05/тик</strong> (1 в секунду).
+                Дерево и броня добавляют к максимуму; медитация — до <strong>+50 за клона</strong>.</td>
+              <td><a href="config.html">конфиг</a> · <a href="skills.html">скилы</a> · <a href="clones.html">медитация</a></td>
+            </tr>
+            <tr>
+              <td>Стамина</td>
+              <td>максимум <strong>100</strong>, регенерация <strong>0,4/тик</strong> (8 в секунду).
+                Тратится на рывок, Восемь врат и мягкую посадку.</td>
+              <td><a href="config.html">конфиг</a> · <a href="skills.html">скилы</a></td>
+            </tr>
+            <tr>
+              <td>Сенин-мана</td>
+              <td>максимум <strong>100</strong>. Идёт в Режим Мудреца; в нём же медитирующие клоны кормят
+                именно сенин-ману, а не чакру.</td>
+              <td><a href="techniques.html#senjutsu">сбор энергии и Режим Мудреца</a></td>
+            </tr>
+            <tr>
+              <td>Замещение</td>
+              <td><strong>1</strong> заряд на старте, до <strong>5</strong> по узлам дерева; каждый
+                восстанавливается за <strong>60 с</strong>. Заряды видны на HUD бревном.</td>
+              <td><a href="config.html">конфиг</a></td>
+            </tr>
+            <tr>
+              <td>Комбо техник</td>
+              <td>Каст срабатывает через <strong>0,75 с</strong> после последней клавиши; удержание последней
+                клавиши <strong>от 0,75 с</strong> превращает комбо в канал (CHANNELED-техника).</td>
+              <td><a href="config.html#keys">конфиг</a></td>
+            </tr>
+            <tr>
+              <td>Типы техник</td>
+              <td><span class="tag tag--instant">Мгновенный</span> срабатывает по вводу ·
+                <span class="tag tag--channel">Канал</span> работает, пока держишь последнюю клавишу ·
+                <span class="tag tag--toggle">Стойка</span> включается и выключается повторным комбо</td>
+              <td><a href="techniques.html">Техники</a></td>
+            </tr>
+            <tr>
+              <td>Клоны</td>
+              <td>Теневой, чиби и мульти-клон не ставят таймер на КД: пока жив хоть один клон данного вида,
+                повторный призыв закрыт, а после последнего — снова доступен сразу.</td>
+              <td><a href="clones.html">Клоны и рабочие</a></td>
+            </tr>
+            <tr>
+              <td>Рабочие</td>
+              <td>Призыв клонов с зажатым <kbd>Shift</kbd> и инструментом в основной руке. Смена (ферма,
+                шахта, лес, охота) открывается отдельным узлом дерева.</td>
+              <td><a href="clones.html#workers">Рабочие смены</a></td>
+            </tr>
+            <tr>
+              <td>Походный сундук</td>
+              <td>Личное хранилище от 27 до 243 слотов с прокруткой и стаками до 256. Живёт в данных
+                игрока — потерять нельзя. Рабочие складывают туда добычу.</td>
+              <td><a href="clones.html#supply">Походный сундук</a></td>
+            </tr>
+            <tr>
+              <td>Дерево скилов</td>
+              <td><strong>193</strong> узлов в 17 ветках четырёх разделов. Цена — очки навыка
+                (10 опыта = 1 очко); узлы-открытия включают техники, остальные дают пассивки.</td>
+              <td><a href="skills.html">Дерево скилов</a></td>
+            </tr>
+            <tr>
+              <td>Освоение</td>
+              <td>Каждая техника дешевеет и ускоряется от числа кастов: <strong>−40 % цены</strong>
+                и <strong>−40 % КД</strong> на максимуме. Половина прогресса — ~40 кастов.</td>
+              <td><a href="mastery.html">Освоение</a></td>
+            </tr>
+            <tr>
+              <td>Смерть</td>
+              <td>Откатывает освоение всех техник: 3–5 % у среднего уровня и 10–20 % у почти освоенного.
+                Купленные узлы дерева не теряются.</td>
+              <td><a href="mastery.html#death">Смерть и откат</a></td>
+            </tr>
+            <tr>
+              <td>Камуи</td>
+              <td>Карманное измерение с полем столбов. Тап — шаг туда и обратно, удержание — затянуть цель
+                (она вернётся туда, откуда её взяли, через 30 с).</td>
+              <td><a href="world.html#kamui">Мир и Камуи</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="keys">
+      <h2 id="s-keys">Клавиши</h2>
+      <p>Клавиши мода лежат в стандартных настройках управления
+        (Options → Controls → Key Binds, категория <strong>Naruto Mod</strong>) — их можно переназначить
+        под себя. По умолчанию:</p>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead>
+            <tr><th>Клавиша</th><th>Действие</th><th>Как вводится</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="nowrap"><span class="combo"><kbd>C</kbd></span> — Jutsu Key 1</td>
+              <td>Печать «1» в комбо</td>
+              <td>Нажатие</td>
+            </tr>
+            <tr>
+              <td class="nowrap"><span class="combo"><kbd>V</kbd></span> — Jutsu Key 2</td>
+              <td>Печать «2» в комбо</td>
+              <td>Нажатие</td>
+            </tr>
+            <tr>
+              <td class="nowrap"><span class="combo"><kbd>B</kbd></span> — Jutsu Key 3</td>
+              <td>Печать «3» в комбо</td>
+              <td>Нажатие, удержание — для каналов и стоек</td>
+            </tr>
+            <tr>
+              <td class="nowrap"><span class="combo"><kbd>X</kbd></span> — Leap</td>
+              <td>Рывок по направлению взгляда. 10 стамины, только с земли.</td>
+              <td>Нажатие, работает без комбо</td>
+            </tr>
+            <tr>
+              <td class="nowrap"><span class="combo"><kbd>J</kbd></span> — Jutsu Menu</td>
+              <td>Меню техник: список по категориям, кнопка «стать ниндзя», вход в дерево скилов.</td>
+              <td>Нажатие</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout callout--note">
+        <div class="callout__title">Двойной прыжок</div>
+        <p>Отдельной клавиши нет: в полёте нажми <kbd>Space</kbd> второй раз — это стоит 2 чакры и 5 стамины.
+        Двойной прыжок открывается узлом в ветке «Ловкость»; до покупки узла он не срабатывает.</p>
+      </div>
+    </section>
+
+    <section id="combo">
+      <h2 id="s-combo">Как читать комбо</h2>
+      <p>Комбо записывается цифрами, как в игре: <strong>1</strong> = <kbd>C</kbd>,
+        <strong>2</strong> = <kbd>V</kbd>, <strong>3</strong> = <kbd>B</kbd>. То есть запись
+        <span class="combo"><kbd>C</kbd><kbd>B</kbd><kbd>B</kbd><kbd>V</kbd></span> и запись
+        <code>1332</code> — это одно и то же (теневой клон).</p>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead>
+            <tr><th>Ситуация</th><th>Что происходит</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Клавиши нажаты подряд</td><td>Комбо копится; техника срабатывает, когда после последней клавиши пройдёт задержка активации (по умолчанию 15 тиков = 0,75 с).</td></tr>
+            <tr><td>Ошибся в комбо</td><td>Набранная последовательность сбрасывается без последствий: чакра не тратится, техника не кастуется.</td></tr>
+            <tr><td>Держишь последнюю клавишу дольше 0,75 с</td><td>Комбо превращается в канал: техники с типом <span class="tag tag--channel">Канал</span> начинают работать, пока клавиша удержана.</td></tr>
+            <tr><td>Отпустил раньше порога</td><td>Канальная техника срабатывает как «тап» — короткий пшик за минимальную цену (у дыханий это 10 чакры, у расэнгана — минимум заряда).</td></tr>
+            <tr><td>Повторный каст стойки</td><td>Техники-стойки <span class="tag tag--toggle">Стойка</span> включаются и выключаются одним и тем же комбо.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <details class="deep">
+        <summary>Точные числа задержек (по коду)</summary>
+        <div class="deep__body">
+          <p>Порог удержания последней клавиши — <code>jutsuKeyHoldThreshold</code>, по умолчанию
+            <strong>15 тиков</strong>. Задержка активации — <code>jutsuActivateDelay</code>, тоже
+            <strong>15 тиков</strong>. Оба ключа лежат в <code>config/naruto-mod.toml</code> и меняются
+            сервером/игроком локально. Пока техника заряжается, нажатия остальных клавиш игнорируются,
+            чтобы случайно не сбить комбо.</p>
+        </div>
+      </details>
+    </section>
+
+    <section id="map">
+      <h2 id="s-map">Карта вики</h2>
+      <div class="tbl-wrap">
+        <table class="tbl tbl--compact">
+          <thead>
+            <tr><th>Страница</th><th>О чём</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><a href="install.html">Установка</a></td><td>Зависимости, версии, подключение к серверу, конфиг-файл.</td></tr>
+            <tr><td><a href="basics.html">Основы</a></td><td>Чакра и стамина, HUD, замещение, смерть, команды, все типы техник.</td></tr>
+            <tr><td><a href="techniques.html">Техники</a></td><td>Все 187 техник по категориям, с ценой, типом и механикой. Плюс рывок и двойной прыжок.</td></tr>
+            <tr><td><a href="clones.html">Клоны и рабочие</a></td><td>Четыре вида клонов, копирование экипировки, рабочие смены, походный сундук.</td></tr>
+            <tr><td><a href="skills.html">Дерево скилов</a></td><td>Все 347 узлов по разделам и ветвям, цены в опыте и что дают.</td></tr>
+            <tr><td><a href="mastery.html">Освоение</a></td><td>Как работает прокачка техник, смерть и медитация.</td></tr>
+            <tr><td><a href="items.html">Предметы и рецепты</a></td><td>Оружие, броня с бонусами, расходники и все 71 рецепт.</td></tr>
+            <tr><td><a href="world.html">Мир и Камуи</a></td><td>Карманное измерение, генерация, что делать с затянутыми мобами.</td></tr>
+            <tr><td><a href="config.html">Настройки сервера</a></td><td>Все ключи <code>naruto-mod.toml</code> с значениями по умолчанию.</td></tr>
+            <tr><td><a href="faq.html">Вопросы</a></td><td>Частые проблемы и короткие ответы: не кастуется, не видно клонов, пропал сундук.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
+
+<footer class="site-foot">
+  <div class="site-foot__inner">
+    <div class="site-foot__col">
+      <div class="site-foot__title">Вики</div>
+      <a href="index.html">Обзор</a>
+      <a href="install.html">Установка</a>
+      <a href="basics.html">Основы</a>
+      <a href="techniques.html">Техники</a>
+    </div>
+    <div class="site-foot__col">
+      <div class="site-foot__title">Развитие</div>
+      <a href="clones.html">Клоны и рабочие</a>
+      <a href="skills.html">Дерево скилов</a>
+      <a href="mastery.html">Освоение</a>
+    </div>
+    <div class="site-foot__col">
+      <div class="site-foot__title">Справочник</div>
+      <a href="items.html">Предметы и рецепты</a>
+      <a href="world.html">Мир и Камуи</a>
+      <a href="config.html">Настройки</a>
+      <a href="faq.html">Вопросы</a>
+    </div>
+    <div class="site-foot__col">
+      <div class="site-foot__title">Ссылки</div>
+      <a href="https://github.com/StandarterDF/Naruto-Mod" rel="noopener">Исходники форка</a>
+      <a href="https://github.com/sekwah41/Naruto-Mod" rel="noopener">Оригинал Sekwah</a>
+    </div>
+  </div>
+  <div class="site-foot__tail">
+    Naruto Mod 1.9.0 · Minecraft 1.20.1 · Forge 47.1.62. Вики собрана по коду мода; на серверах
+    с изменённым конфигом числа могут отличаться.
+  </div>
+</footer>
+</body>
+</html>

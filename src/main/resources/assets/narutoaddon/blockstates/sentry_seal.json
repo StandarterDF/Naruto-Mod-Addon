@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "narutoaddon:block/sentry_seal"
+    }
+  }
+}

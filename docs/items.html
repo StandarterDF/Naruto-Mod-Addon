@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Предметы и рецепты: оружие, броня, расходники — Naruto Mod</title>
+<meta name="description" content="Все 71 рецепт Naruto Mod для Minecraft 1.20.1: кунай, сюрикен, катана, Самехада, Кубикирибочо, 27 повязок, маски и броня АНБУ, ниндзя-кухня, чакра-батарея, бумажная бомба, утяжелители и точные числа из кода.">
+<meta name="theme-color" content="#0d0e12">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/favicon.png">
+<link rel="stylesheet" href="style.css?v=784d5948">
+<script src="app.js" defer></script>
+<script src="recipes-data.js" defer></script>
+<script src="craft.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#main">К содержимому</a>
+
+<header class="site-head">
+  <div class="site-head__inner">
+    <a class="brand" href="index.html">
+      <span class="brand__mark" aria-hidden="true">忍</span>
+      <span>Naruto Mod<span class="brand__sub">1.20.1 / Forge · вики форка</span></span>
+    </a>
+    <span class="site-head__spacer"></span>
+    <a class="head-link" href="techniques.html">Техники</a>
+    <a class="head-link" href="skills.html">Скилы</a>
+    <a class="head-link" href="faq.html">FAQ</a>
+    <div class="search" id="search">
+      <div class="search__field">
+        <span class="search__glyph" aria-hidden="true">⌕</span>
+        <input class="search__input" id="search-input" type="search" placeholder="Поиск: катана, повязка, рецепт…" autocomplete="off" spellcheck="false" aria-label="Поиск по вики">
+        <span class="search__hint">Ctrl K</span>
+      </div>
+      <div class="search__panel" id="search-panel" role="listbox" aria-label="Результаты поиска"></div>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="side" aria-label="Разделы вики">
+    <nav>
+      <div class="side__group">
+        <div class="side__label">Начало</div>
+        <a class="side__link" href="index.html">Обзор</a>
+        <a class="side__link" href="install.html">Установка</a>
+      </div>
+      <div class="side__group">
+        <div class="side__label">Игра</div>
+        <a class="side__link" href="basics.html">Основы</a>
+        <a class="side__link" href="techniques.html">Техники</a>
+        <a class="side__link" href="clones.html">Клоны и рабочие</a>
+      </div>
+      <div class="side__group">
+        <div class="side__label">Развитие</div>
+        <a class="side__link" href="skills.html">Дерево скилов</a>
+        <a class="side__link" href="mastery.html">Освоение</a>
+      </div>
+      <div class="side__group">
+        <div class="side__label">Справочник</div>
+        <a class="side__link" href="items.html">Предметы и рецепты</a>
+        <a class="side__link" href="world.html">Мир и Камуи</a>
+        <a class="side__link" href="config.html">Настройки сервера</a>
+      </div>
+      <div class="side__group">
+        <div class="side__label">Ещё</div>
+        <a class="side__link" href="faq.html">Вопросы</a>
+      </div>
+    </nav>
+    <p class="side__note">Версия мода <strong>1.9.0</strong> · Minecraft 1.20.1 · Forge 47.1.62.<br>Числа на страницах — из кода, а не из старых версий.</p>
+  </aside>
+
+  <main class="doc" id="main">
+    <header class="doc__head">
+      <div class="doc__kicker">Справочник · снаряжение</div>
+      <h1>Предметы и рецепты</h1>
+      <p class="doc__lead">
+        На странице — все <strong>71 рецепт</strong> мода: семь видов оружия, броня деревень и
+        организаций, ниндзя-кухня, расходники и ловушки. Оружие здесь не косметика: у куная своя
+        скорость замаха, у великих мечей — растущая от удара к удару цепочка, а броня даёт не «плюс к
+        защите», а <strong>чакру, здоровье и регенерацию</strong>.
+      </p>
+      <div class="doc__meta">
+        <span>7 видов оружия</span>
+        <span>27 повязок и 5 масок</span>
+        <span>8 блюд ниндзя-кухни</span>
+        <span>Печать: 1 на каст</span>
+      </div>
+    </header>
+
+    <nav class="page-toc" aria-label="На этой странице">
+      <div class="page-toc__title">На этой странице</div>
+      <ol>
+        <li class="toc-l2"><a href="#weapons">Оружие</a></li>
+        <li class="toc-l3"><a href="#thrown">Метательное</a></li>
+        <li class="toc-l3"><a href="#melee">Клинки и цепочки</a></li>
+        <li class="toc-l2"><a href="#armor">Броня</a></li>
+        <li class="toc-l3"><a href="#armor-craft">Крафт брони</a></li>
+        <li class="toc-l2"><a href="#craft">Материалы</a></li>
+        <li class="toc-l3"><a href="#headbands">Повязки</a></li>
+        <li class="toc-l2"><a href="#consumables">Расходники</a></li>
+        <li class="toc-l3"><a href="#battery">Чакра-батарея</a></li>
+        <li class="toc-l3"><a href="#food">Ниндзя-кухня</a></li>
+        <li class="toc-l3"><a href="#throwables">Дым и иглы</a></li>
+        <li class="toc-l2"><a href="#paperbomb">Бумажная бомба</a></li>
+        <li class="toc-l2"><a href="#scrolls">Свитки техник</a></li>
+        <li class="toc-l2"><a href="#misc">Прочее</a></li>
+        <li class="toc-l3"><a href="#weights">Утяжелители</a></li>
+        <li class="toc-l3"><a href="#paintings">Картины</a></li>
+      </ol>
+    </nav>
+
+    <section id="weapons">
+      <h2 id="s-weapons">Оружие</h2>
+      <p>Оружие делится на два класса: метательное (бросается правой кнопкой, летит как стрела и,
+        застряв, <strong>подбирается обратно</strong>) и великие мечи ближнего боя с цепочкой ударов.
+        Урон ниже указан итоговый — с учётом базового удара кулаком (1).</p>
+
+      <h3 id="thrown">Метательное</h3>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>Предмет</th><th>ID</th><th class="num">Урон в руке</th>
+              <th class="num">Скорость атаки</th><th class="num">Урон броска</th>
+              <th class="num">КД броска</th><th>Крафт</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Кунай</strong></td>
+              <td class="mono small">kunai</td>
+              <td class="num">4 (+3)</td><td class="num">2,2</td>
+              <td class="num">2</td><td class="num">10 тиков</td>
+              <td class="small">слиток железа + палка <span class="muted">(столбиком)</span></td>
+            </tr>
+            <tr>
+              <td><strong>Игла</strong> (сенбон)</td>
+              <td class="mono small">senbon</td>
+              <td class="num">2 (+1)</td><td class="num">2,2</td>
+              <td class="num">0,5</td><td class="num gold">без КД</td>
+              <td class="small">1 слиток железа → <strong>4</strong> иглы</td>
+            </tr>
+            <tr>
+              <td><strong>Сюрикен</strong></td>
+              <td class="mono small">shuriken</td>
+              <td class="num muted">1 (как кулак)</td><td class="num">4,0</td>
+              <td class="num">2,5</td><td class="num">10 тиков</td>
+              <td class="small">2 слитка железа → <strong>4</strong> сюрикена <span class="muted">(в ряд)</span></td>
+            </tr>
+            <tr>
+              <td><strong>Взрывной кунай</strong></td>
+              <td class="mono small">explosive_kunai</td>
+              <td class="num">4 (+3)</td><td class="num">2,2</td>
+              <td class="num">2 + взрыв</td><td class="num">10 тиков</td>
+              <td class="small">кунай + порох, стек <strong>16</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <ul>
+        <li><strong>Скорость атаки 2,2</strong> — кунай и игла машут заметно быстрее меча (~1,6): в
+          упор их можно «строчить», и только у сюрикена в руке нет вообще никаких бонусов.</li>
+        <li><strong>Подбор снарядов работает</strong>: застрявшие в стене кунай, иглу или сюрикен можно
+          подобрать (в креативе — только игрокам в креативе). Игла — единственная без кулдауна,
+          поэтому иглы удобно метать пачками.</li>
+        <li><strong>Взрывной кунай</strong> детонирует в трёх случаях: попал в существо при броске,
+          пролежал в земле <strong>10 тиков</strong> или им ударили в ближнем бою. Радиус —
+          <strong>3</strong>, блоки ломает (по умолчанию; ключи
+          <code>kunaiExplosionRadius</code> и <code>kunaiExplosionBreakBlocks</code> на странице
+          <a href="config.html">настроек</a>), стек — 16 штук.</li>
+      </ul>
+      <div class="callout callout--warn">
+        <div class="callout__title">Взрывной кунай не различает своих</div>
+        <p>У взрыва куная нет фильтра союзников — в отличие от взрыва клона из бумажной бомбы, он
+          бьёт <em>всех</em> в радиусе, включая самого метателя. В ближнем бою (удар рукой) заряд
+          срабатывает прямо на атакующем: бить им «в упор» — это взорваться вместе с целью.</p>
+      </div>
+
+      <h3 id="melee">Клинки и цепочки</h3>
+      <p>Катана — обычный меч мода, а Самехада и Кубикирибочо — «великие мечи»: каждый удар,
+        попавший в окно после предыдущего, продлевает <strong>цепочку</strong>, и этот же удар бьёт
+        сильнее. Пропустил окно — счётчик обнулился.</p>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>Оружие</th><th>ID</th><th class="num">Урон</th><th class="num">Скорость</th>
+              <th>Цепочка</th><th>Особенность</th><th>Крафт</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Катана</strong></td>
+              <td class="mono small">katana</td>
+              <td class="num">5,5</td><td class="num">2,05</td>
+              <td class="muted small">—</td>
+              <td class="small">250 прочности, чинится железом, зачаруемость 14</td>
+              <td class="small">2 железа + палка <span class="muted">(столбиком)</span></td>
+            </tr>
+            <tr>
+              <td><strong>Самехада</strong></td>
+              <td class="mono small">samehada</td>
+              <td class="num">6,5</td><td class="num">1,6</td>
+              <td class="small">+0,5 за звено, 20 звеньев, окно 4 с</td>
+              <td class="small">+1,5 чакры владельцу за каждый удар; стек 1</td>
+              <td class="small">
+                <code>D I I<br>D I ·<br>S · ·</code>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Кубикирибочо</strong></td>
+              <td class="mono small">kubikiribocho</td>
+              <td class="num">8,5</td><td class="num">0,8</td>
+              <td class="small">+0,75 за звено, 20 звеньев, окно 5 с</td>
+              <td class="small">медленный и тяжёлый, зато +15 урона на вершине цепочки; стек 1</td>
+              <td class="small">
+                <code>D I I<br>D I I<br>S I ·</code>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="small muted">В схемах крафта: <code>D</code> — алмаз, <code>I</code> — слиток железа,
+        <code>S</code> — палка, точка — пустой слот.</p>
+      <ul>
+        <li><strong>Цепочка живёт на самом предмете</strong> (в NBT): два меча в хотбаре её не делят,
+          а в подсказке предмета видно текущее число звеньев. Первый удар цепочки уже усилен
+          (+0,5 у Самехады), двадцатый — максимально: Самехада добирается до ~16 урона, Кубикирибочо
+          — до ~23.</li>
+        <li><strong>Урон считается в момент удара</strong>, до того как цепочка продлена, поэтому
+          звено «работает» на следующем попадании, а не задним числом.</li>
+        <li><strong>Про Самехаду:</strong> подсказка предмета обещает «забирает 1,5 чакры у того, кого
+          режет», но по коду чакра просто <em>добавляется владельцу</em> — у цели ничего не
+          вычитается. Против обычных мобов это чистый подарок: +1,5 чакры за удар.</li>
+      </ul>
+    </section>
+
+    <section id="armor">
+      <h2 id="s-armor">Броня</h2>
+      <p>Броня мода — это ниндзя-комплект: её смысл не в очках защиты, а в <strong>бонусах</strong>,
+        которые она выдаёт, пока надета. Бонусы суммируются со всех надетых предметов и
+        пересчитываются каждый тик: снял вещь — бонус ушёл с ней.</p>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>Предмет</th><th>Слот</th><th class="num">Броня</th><th class="num">Прочность</th>
+              <th>Бонус</th><th>Особенности</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Повязки</strong> (27 видов)</td>
+              <td>Шлем</td><td class="num">2</td><td class="num">385</td>
+              <td class="gold">+0,4 чакры/с</td>
+              <td class="small">Самый дешёвый способ вернуть регенерацию чакры. Рецепты — <a href="#headbands">ниже</a>.</td>
+            </tr>
+            <tr>
+              <td><strong>Маски АНБУ</strong> (5 цветов)</td>
+              <td>Шлем</td><td class="num">2</td><td class="num">385</td>
+              <td class="gold">+30 чакры</td>
+              <td class="small">Скрывают ник над головой. Цвета: красная, жёлтая, зелёная, синяя и «Хаку».</td>
+            </tr>
+            <tr>
+              <td><strong>Жилет новичка</strong> <span class="mono small">flak_jacket_new</span></td>
+              <td>Нагрудник</td><td class="num">6</td><td class="num">560</td>
+              <td class="gold">+2 HP <span class="muted">(1 сердце)</span></td>
+              <td class="small">Первый шаг к «настоящему» жилету; в инвентаре зовётся просто Flak Jacket.</td>
+            </tr>
+            <tr>
+              <td><strong>Жилет джонина</strong> <span class="mono small">flak_jacket</span></td>
+              <td>Нагрудник</td><td class="num">7</td><td class="num">560</td>
+              <td class="gold">+4 HP <span class="muted">(2 сердца)</span></td>
+              <td class="small">Усиленная версия жилета новичка.</td>
+            </tr>
+            <tr>
+              <td><strong>Броня АНБУ</strong> <span class="mono small">anbu_armor</span></td>
+              <td>Нагрудник</td><td class="num">7</td><td class="num">560</td>
+              <td class="gold">+20 чакры, +2 HP, +0,2 чакры/с</td>
+              <td class="small">Баланс между жилетом и маской АНБУ в одном слоте.</td>
+            </tr>
+            <tr>
+              <td><strong>Плащ Акацуки</strong> <span class="mono small">akatsuki_cloak</span></td>
+              <td>Нагрудник</td><td class="num">7</td><td class="num">560</td>
+              <td class="gold">+50 чакры, +0,5 чакры/с</td>
+              <td class="small">Лучший источник чакры и регенерации в игре — но и крафт самый дорогой.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <ul>
+        <li><strong>Суммирование:</strong> повязка с плащом Акацуки дают +0,9 чакры/с и +50 к
+          максимуму; HP-бонусы складываются так же. Каждый бонус живёт, пока предмет надет.</li>
+        <li><strong>Защита указана без учёта зачарований:</strong> у всей брони мода стойкость
+          (toughness) 2,1 и зачаруемость 8 — повязки зачаровываются чуть хуже (6). Прочность шлемов
+          — 385, нагрудников — 560.</li>
+        <li><strong>Ремонт не предусмотрен:</strong> материал не задаёт ингредиент починки, поэтому
+          восстановить износ в наковальне нечем. Считай броню расходником или зачаровывай её
+          «Unbreaking».</li>
+      </ul>
+
+      <h3 id="armor-craft">Крафт брони</h3>
+      <div class="tbl-wrap">
+        <table class="tbl tbl--compact">
+          <thead>
+            <tr><th>Что</th><th>Ингредиенты</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Жилет новичка</td>
+              <td>5 × <a href="#craft">пластина брони</a> + <a href="#craft">ткань</a></td>
+            </tr>
+            <tr>
+              <td>Жилет джонина</td>
+              <td>Жилет новичка + 2 × пластина брони</td>
+            </tr>
+            <tr>
+              <td>Броня АНБУ</td>
+              <td>Жилет новичка + 2 × пластина брони + чёрная укреплённая ткань</td>
+            </tr>
+            <tr>
+              <td>Плащ Акацуки</td>
+              <td>4 × чёрная укреплённая ткань + красный краситель <span class="muted">(без пластин)</span></td>
+            </tr>
+            <tr>
+              <td>Маска АНБУ</td>
+              <td>3 × пластина брони + краситель: красный / жёлтый / зелёный / синий / голубой (Хаку)</td>
+            </tr>
+            <tr>
+              <td>Повязка</td>
+              <td><a href="#craft">ткань</a> + <a href="#craft">пластина брони</a> + «символ деревни» — см. <a href="#headbands">таблицу повязок</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="craft">
+      <h2 id="s-craft">Материалы</h2>
+      <p>Вся броня и повязки собираются из двух базовых материалов: <strong>ткани</strong> и
+        <strong>пластины брони</strong>. Ничего редкого в них нет — всё начинается с ниток и железа.</p>
+      <div class="tbl-wrap">
+        <table class="tbl tbl--compact">
+          <thead>
+            <tr><th>Материал</th><th>ID</th><th>Крафт</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Ткань</strong></td>
+              <td class="mono small">fabric</td>
+              <td>3 × нить</td>
+            </tr>
+            <tr>
+              <td><strong>Укреплённая ткань</strong></td>
+              <td class="mono small">fabric_reinforced</td>
+              <td>ткань + кожа + слиток железа</td>
+            </tr>
+            <tr>
+              <td><strong>Чёрная укреплённая ткань</strong></td>
+              <td class="mono small">fabric_reinforced_black</td>
+              <td>укреплённая ткань + чёрный краситель</td>
+            </tr>
+            <tr>
+              <td><strong>Зелёная укреплённая ткань</strong></td>
+              <td class="mono small">fabric_reinforced_green</td>
+              <td>укреплённая ткань + зелёный краситель</td>
+            </tr>
+            <tr>
+              <td><strong>Пластина брони</strong></td>
+              <td class="mono small">armor_plate</td>
+              <td>3 × слиток железа</td>
+            </tr>
+            <tr>
+              <td><strong>Зелёная пластина</strong></td>
+              <td class="mono small">armor_plate_green</td>
+              <td>пластина брони + зелёный краситель</td>
+            </tr>
+            <tr>
+              <td><strong>Кристалл чакры</strong></td>
+              <td class="mono small">chakra_crystal</td>
+              <td>аметистовый осколок + лазурит + светопыль</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>Кристалл чакры</strong> — материал для сложных рецептов и маленький переносной
+        аккумулятор: ёмкость <strong>100</strong> чакры, перевод по <strong>20</strong> за раз
+        (ПКМ — влить свою чакру, Shift + ПКМ — забрать обратно; стек 16, заряд живёт в NBT). Молния в
+        громоотвод рядом заряжает кристалл бесплатно и сразу до полного. Заряженный кристалл, положенный
+        в крафт, тратится как обычный ингредиент — заряд в рецепт не переходит.</p>
+
+      <h3 id="headbands">Повязки</h3>
+      <p>Любая повязка — это <strong>ткань + пластина брони + символ деревни</strong>. Царапины
+        делаются поверх готовой повязки: положи её в верстак с кремнем и получишь версию
+        «Scratched». Бонус зависит от <strong>деревни</strong>, которой повязка принадлежит: деревня
+        учит своих синоби разному, и повязка носит часть этой школы.</p>
+      <div class="tbl-wrap">
+        <table class="tbl tbl--compact">
+          <thead>
+            <tr><th>Школа</th><th>Повязки</th><th>Бонус</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Лист, Трава</td><td class="small">leaf, grass (+ scratched/black)</td><td>+0,4 чакры/с</td></tr>
+            <tr><td>Песок</td><td class="small">sand</td><td>+2 здоровья</td></tr>
+            <tr><td>Камень, Лава</td><td class="small">rock, lava</td><td>+4 здоровья</td></tr>
+            <tr><td>Облако</td><td class="small">cloud</td><td>+25 чакры к максимуму</td></tr>
+            <tr><td>Туман, Водопад, Дождь</td><td class="small">mist, waterfall, rain</td><td>+0,7 чакры/с</td></tr>
+            <tr><td>Звук</td><td class="small">sound</td><td>+40 чакры к максимуму</td></tr>
+            <tr><td>Пустые и декоративные</td><td class="small">blue, black, red, custard, pride, youtube</td><td>+0,4 чакры/с</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="small muted">Числа одинаковы у обычной и «испарапанной» версии одной деревни: кремень
+        меняет только вид. Бонусы складываются с бронёй и медитацией.</p>
+      <div class="tbl-wrap">
+        <table class="tbl tbl--compact">
+          <thead>
+            <tr><th>Повязка</th><th>Символ</th><th>Царапина</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Синяя повязка (Пустая) <span class="mono small">headband_blue</span></td><td>синий краситель</td><td class="muted">нет</td></tr>
+            <tr><td>Чёрная повязка (Пустая) <span class="mono small">headband_black</span></td><td>чёрный краситель</td><td class="muted">нет</td></tr>
+            <tr><td>Красная повязка (Пустая) <span class="mono small">headband_red</span></td><td>красный краситель</td><td class="muted">нет</td></tr>
+            <tr><td>Hidden In The Leaves <span class="mono small">headband_leaf</span></td><td>дубовые листья</td><td class="gold">есть</td></tr>
+            <tr><td>Hidden In The Leaves (Scratched) <span class="mono small">headband_leaf_scratched</span></td><td>повязка Листа + кремень</td><td class="muted">—</td></tr>
+            <tr><td>Hidden In The Leaves (Black) <span class="mono small">headband_leaf_black</span></td><td>повязка Листа + чёрный краситель</td><td class="gold">есть</td></tr>
+            <tr><td>Hidden In The Leaves (Black, Scratched) <span class="mono small">headband_leaf_black_scratched</span></td><td>чёрная повязка Листа + кремень</td><td class="muted">—</td></tr>
+            <tr><td>Hidden In The Rock <span class="mono small">headband_rock</span></td><td>камень</td><td class="gold">есть</td></tr>
+            <tr><td>Hidden In The Rock (Scratched) <span class="mono small">headband_rock_scratched</span></td><td>повязка Скалы + кремень</td><td class="muted">—</td></tr>
+            <tr><td>Hidden In The Sand <span class="mono small">headband_sand</span></td><td>песок</td><td class="gold">есть</td></tr>
+            <tr><td>Hidden In The Sand (Scratched) <span class="mono small">headband_sand_scratched</span></td><td>повязка Песка + кремень</td><td class="muted">—</td></tr>
+            <tr><td>Hidden In The Sound <span class="mono small">headband_sound</span></td><td>аметистовый осколок</td><td class="gold">есть</td></tr>
+            <tr><td>Hidden In The Sound (Scratched) <span class="mono small">headband_sound_scratched</span></td><td>повязка Звука + кремень</td><td class="muted">—</td></tr>
+            <tr><td>Hidden In The Mist <span class="mono small">headband_mist</span></td><td>голубой краситель</td><td class="gold">есть</td></tr>
+            <tr><td>Hidden In The Mist (Scratched) <span class="mono small">headband_mist_scratched</span></td><td>повязка Тумана + кремень</td><td class="muted">—</td></tr>
+            <tr><td>Hidden In The Waterfall <span class="mono small">headband_waterfall</span></td><td>синий лёд</td><td class="gold">есть</td></tr>
+            <tr><td>Hidden In The Waterfall (Scratched) <span class="mono small">headband_waterfall_scratched</span></td><td>повязка Водопада + кремень</td><td class="muted">—</td></tr>
+            <tr><td>Hidden In The Clouds <span class="mono small">headband_cloud</span></td><td>белая шерсть</td><td class="gold">есть</td></tr>
+            <tr><td>Hidden In The Clouds (Scratched) <span class="mono small">headband_cloud_scratched</span></td><td>повязка Облака + кремень</td><td class="muted">—</td></tr>
+            <tr><td>Hidden In The Rain <span class="mono small">headband_rain</span></td><td>призмариновый осколок</td><td class="gold">есть</td></tr>
+            <tr><td>Hidden In The Rain (Scratched) <span class="mono small">headband_rain_scratched</span></td><td>повязка Дождя + кремень</td><td class="muted">—</td></tr>
+            <tr><td>Hidden In The Grass <span class="mono small">headband_grass</span></td><td>лаймовый краситель</td><td class="gold">есть</td></tr>
+            <tr><td>Hidden In The Grass (Scratched) <span class="mono small">headband_grass_scratched</span></td><td>повязка Травы + кремень</td><td class="muted">—</td></tr>
+            <tr><td>Custard Headband <span class="mono small">headband_custard</span></td><td>жёлтый краситель</td><td class="muted">нет</td></tr>
+            <tr><td>Hidden In The Pride <span class="mono small">headband_pride</span></td><td>пурпурный краситель</td><td class="muted">нет</td></tr>
+            <tr><td>Hidden In The Memes <span class="mono small">headband_youtube</span></td><td>редстоун</td><td class="muted">нет</td></tr>
+            <tr><td>Lava Headband <span class="mono small">headband_lava</span></td><td>магмовый крем</td><td class="muted">нет</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="small muted">Названия повязок на вики — английские, как они и выглядят в игре: русских
+        строк для них в моде нет (см. предупреждение в конце страницы).</p>
+    </section>
+
+    <section id="consumables">
+      <h2 id="s-consumables">Расходники</h2>
+      <p>Четыре предмета, без которых ниндзя далеко не уйдёт: боевые пилюли, сытный рамен, печать для
+        клонов и чакра-батарея — единственный способ <em>хранить</em> чакру, а не только тратить её.
+        Ниже — ниндзя-кухня, которая возвращает чакру и стамину, и карманное метательное.</p>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>Предмет</th><th>Что даёт</th><th class="num">Еда</th><th class="num">КД</th>
+              <th>Крафт</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Солдатские пилюли</strong></td>
+              <td class="small">+35 чакры, +35 стамины; Speed I и Haste I на 30 с; Regeneration I на
+                8 с. Баффы живут дольше, чем успевает остыть предмет.</td>
+              <td class="num">6 / 0,6</td><td class="num">60 с</td>
+              <td class="small">сахар + пшеница + светопыль → <strong>3</strong> пилюли (стек 16)</td>
+            </tr>
+            <tr>
+              <td><strong>Рамен</strong></td>
+              <td class="small">Просто хорошая еда: насыщает сильнее, чем что-либо из ванили за один
+                присест.</td>
+              <td class="num">8 / 1,2</td><td class="num muted">—</td>
+              <td class="small">миска + пшеница + 2 жареные свиные котлеты</td>
+            </tr>
+            <tr>
+              <td><strong>Чакра-печать</strong></td>
+              <td class="small">Топливо клонов: тратится на <a href="clones.html#kinds">мульти-клона и
+                медитацию</a> — одну за каст. На 90 % освоения техники печать не нужна совсем.</td>
+              <td class="num muted">—</td><td class="num muted">—</td>
+              <td class="small">2 × бумага + чернильный мешок → <strong>3</strong> печати</td>
+            </tr>
+            <tr>
+              <td><strong>Чакра-батарея</strong></td>
+              <td class="small">Хранит до <strong>500</strong> чакры и сама питает поддерживающие
+                техники. Подробности ниже.</td>
+              <td class="num muted">—</td><td class="num muted">—</td>
+              <td class="small">
+                крест из 4 редстоунов вокруг печати:<br>
+                <code>· R ·<br>R S R<br>· R ·</code>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 id="battery">Чакра-батарея</h3>
+      <ul>
+        <li><strong>ПКМ</strong> — забрать до 50 чакры из батареи; <strong>Shift + ПКМ</strong> —
+          вложить до 50 своей. Каждый перевод подтверждается сообщением в чате.</li>
+        <li><strong>Привязка к владельцу:</strong> первое касание закрепляет батарею за игроком;
+          остальным она отказывает. Привязка хранится в NBT самого предмета, так что переживает
+          смерть, сундуки и шалкеры.</li>
+        <li><strong>Сама питает техники:</strong> если своей чакры осталось меньше 30, батарея из
+          инвентаря (не обязательно из руки!) молча доливает до 50 — тогглы и каналы тратят её
+          примерно с той же скоростью, с какой тратили бы чакру. Мгновенные касты из батареи не
+          оплачиваются — только поддержание.</li>
+        <li><strong>Заряженная батарея светится</strong> (зачарованные искры), а в подсказке видно
+          текущий заряд и владельца.</li>
+      </ul>
+
+      <h3 id="food">Ниндзя-кухня</h3>
+      <p>Еда мода — не только голод: блюдо с бонусом <strong>доливает чакру и стамину</strong> в момент,
+        когда доеден последний кусок. Прибавка небольшая и выдаётся один раз за порцию — это подготовка
+        к миссии, а не замена медитации. Работает только у ниндзя (когда режим ниндзя включён).</p>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>Блюдо</th><th class="num">Сытость</th><th class="num">Насыщение</th>
+              <th>Бонус</th><th>Эффект</th><th>Крафт</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Рамен</strong> <span class="mono small">ramen</span></td>
+              <td class="num">8</td><td class="num">1,2</td>
+              <td class="muted small">—</td><td class="muted small">—</td>
+              <td class="small">миска + пшеница + 2 жареные свиные котлеты</td>
+            </tr>
+            <tr>
+              <td><strong>Рамен мисо</strong> <span class="mono small">ramen_miso</span></td>
+              <td class="num">9</td><td class="num">1,3</td>
+              <td class="small">+15 чакры</td>
+              <td class="small">Регенерация I, 5 с</td>
+              <td class="small">миска + пшеница + коричневый гриб + сушёная ламинария</td>
+            </tr>
+            <tr>
+              <td><strong>Рамен со свининой</strong> <span class="mono small">ramen_pork</span></td>
+              <td class="num">10</td><td class="num">1,4</td>
+              <td class="small">+20 чакры, +10 стамины</td>
+              <td class="small">Сила I, 6 с</td>
+              <td class="small">миска + пшеница + жареная свиная котлета + сушёная ламинария</td>
+            </tr>
+            <tr>
+              <td><strong>Рамен с морепродуктами</strong> <span class="mono small">ramen_seafood</span></td>
+              <td class="num">9</td><td class="num">1,2</td>
+              <td class="small">+15 чакры, +5 стамины</td>
+              <td class="small">Подводное дыхание, 10 с</td>
+              <td class="small">миска + пшеница + жареная треска + сушёная ламинария</td>
+            </tr>
+            <tr>
+              <td><strong>Онигири</strong> <span class="mono small">onigiri</span></td>
+              <td class="num">4</td><td class="num">0,4</td>
+              <td class="small">+5 чакры, +20 стамины</td>
+              <td class="small">естся вдвое быстрее</td>
+              <td class="small">2 пшеницы + сушёная ламинария → <strong>2</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Данго</strong> <span class="mono small">dango</span></td>
+              <td class="num">3</td><td class="num">0,5</td>
+              <td class="small">+8 чакры</td>
+              <td class="small">Регенерация I, 4 с; естся вдвое быстрее</td>
+              <td class="small">пшеница + сахар + сладкие ягоды → <strong>3</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Карри жизни</strong> <span class="mono small">curry</span></td>
+              <td class="num">12</td><td class="num">1,5</td>
+              <td class="small">+30 чакры, +20 стамины</td>
+              <td class="small">Сила I и Скорость I, 10 с</td>
+              <td class="small">миска + морковь + картофель + жареная говядина + коричневый гриб</td>
+            </tr>
+            <tr>
+              <td><strong>Паёк ниндзя</strong> <span class="mono small">ninja_ration</span></td>
+              <td class="num">9</td><td class="num">0,67</td>
+              <td class="muted small">—</td><td class="muted small">—</td>
+              <td class="small">хлеб + жареная говядина + сушёная ламинария + бумага → <strong>2</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="small muted">Суп-рамены и карри возвращают миску, рамен и паёк складываются по 16, а
+        сытные блюда с бонусами — по 8. Паёк — «дорожный» вариант: без эффектов и без прибавки к
+        пулам, зато самый дешёвый и хорошо складывается в стопку. Блюда с бонусом чакры/стамины
+        помечены тегом <code>narutomod:chakra_food</code>: датапак может добавить в тег свою еду, и
+        она тоже начнёт возвращать чакру.</p>
+
+      <h3 id="throwables">Дым и иглы</h3>
+      <p>Два расходника на случай, когда чакру тратить не хочется: дымовая бомба повторяет технику
+        дымовой завесы, а отравленная игла заменяет сенбон с ядом.</p>
+      <div class="tbl-wrap">
+        <table class="tbl tbl--compact">
+          <thead>
+            <tr>
+              <th>Предмет</th><th>Что делает</th><th class="num">Дистанция</th>
+              <th class="num">КД</th><th class="num">Стек</th><th>Крафт</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Дымовая бомба</strong> <span class="mono small">smoke_bomb</span></td>
+              <td class="small">Бросок. На месте падения — облако радиусом <strong>3</strong> блока на
+                5 секунд: мобы внутри теряют цель, а игрокам, кроме метателя, облако даёт слепоту
+                (3 с, обновляется, пока они внутри). Ключ <code>smokeBlindPlayers</code> отключает
+                слепоту.</td>
+              <td class="num">бросок</td>
+              <td class="num">1 с</td>
+              <td class="num">16</td>
+              <td class="small">порох + древесный уголь + 2 бумаги → <strong>4</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Отравленные иглы</strong> <span class="mono small">poisoned_needles</span></td>
+              <td class="small">Не летят, а <strong>бьют сразу</strong> в то, на что смотрит игрок:
+                3 урона и Яд I на 5 секунд. Нежить и пауки яду не поддаются — им достаётся только
+                укол. Игла тратится и при промахе.</td>
+              <td class="num">8 блоков</td>
+              <td class="num">1 с</td>
+              <td class="num">16</td>
+              <td class="small">2 железных самородка + паучий глаз → <strong>3</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="small muted">Обе бомбы и иглы бросаются правой кнопкой; в креативе не тратятся. Дым
+        собственной бомбы не слепит метателя, но чужая бомба слепит и его.</p>
+    </section>
+
+    <section id="paperbomb">
+      <h2 id="s-paperbomb">Бумажная бомба</h2>
+      <p>Это не метательное оружие, а <strong>блок-ловушка</strong>: ставится на пол, стену или
+        потолок и через тик становится невидимым — снаружи видно только искры фитиля. Крафт: 3 ×
+        бумага + порох.</p>
+      <dl class="kv">
+        <dt>Фитиль</dt>
+        <dd>80 тиков (<strong>4 секунды</strong>) с момента срабатывания. «Короткий фитиль» —
+          2 тика — срабатывает, когда бомбу задевает существо или рядом детонирует другая бомба.</dd>
+        <dt>Чем поджигается</dt>
+        <dd>ПКМ, огонь, сигнал редстоуна, касание сущности — и просто взрыв рядом. Цепочка бомб,
+          поставленных вплотную, срабатывает друг за другом.</dd>
+        <dt>Дождь</dt>
+        <dd>Осадки смывают бомбу: блок уничтожается и выпадает предметом.</dd>
+        <dt>Взрыв</dt>
+        <dd>Радиус <strong>4</strong> блока, блоки ломаются (по умолчанию). Ключи
+          <code>paperBombExplosionRadius</code> и <code>paperBombExplosionBreakBlocks</code> —
+          на странице <a href="config.html">настроек</a>.</dd>
+      </dl>
+      <p class="small muted">В отличие от взрыва клона из бумажной бомбы (там свои не задеваются),
+        взрыв самой бомбы фильтра союзников не имеет — в радиусе достаётся и кастеру, и его клонам.</p>
+    </section>
+
+    <section id="scrolls">
+      <h2 id="s-scrolls">Свитки техник</h2>
+      <p>Свиток — это знание, а не крафт: его нельзя сделать, только найти. Прочитанный свиток
+        открывает технику (у части техник он <strong>обязателен</strong> вместе с узлом дерева),
+        а <strong>повторный свиток</strong> уже знакомой техники не пропадает зря — он засчитывается
+        как дополнительная практика и поднимает освоение. Свитки подмешиваются в сундуки через
+        Global Loot Modifier: чем опаснее место, тем выше тир.</p>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead>
+            <tr><th>Свиток</th><th>Тир</th><th>Где искать</th><th>Шанс</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Свиток Расенгана</strong> <span class="mono small">scroll_rasengan</span></td>
+              <td>1</td>
+              <td class="small">обычные данжи, шахты, пирамиды, храмы, иглу, руины, затонувшие корабли,
+                аванпост разбойников</td>
+              <td class="num">10 %</td>
+            </tr>
+            <tr>
+              <td><strong>Свиток Восьми врат</strong> <span class="mono small">scroll_eight_gates</span></td>
+              <td>2</td>
+              <td class="small">крепости, крепость Нижнего мира, бастионы, сокровище затонувшего корабля,
+                оружейник деревни</td>
+              <td class="num">18 %</td>
+            </tr>
+            <tr>
+              <td><strong>Свиток Режима Мудреца</strong> <span class="mono small">scroll_sage_mode</span></td>
+              <td>2</td>
+              <td class="small">те же места, что и у Восьми врат</td>
+              <td class="num">18 %</td>
+            </tr>
+            <tr>
+              <td><strong>Свиток Стены Земли</strong> <span class="mono small">scroll_earth_wall</span></td>
+              <td>2</td>
+              <td class="small">те же места, что и у Восьми врат</td>
+              <td class="num">18 %</td>
+            </tr>
+            <tr>
+              <td><strong>Свиток Камуи</strong> <span class="mono small">scroll_kamui</span></td>
+              <td>3</td>
+              <td class="small">древний город, ледяной ящик, город Края, сокровищница бастиона,
+                лесной особняк</td>
+              <td class="num">30 %</td>
+            </tr>
+            <tr>
+              <td><strong>Свиток Кирин</strong> <span class="mono small">scroll_kirin</span></td>
+              <td>3</td>
+              <td class="small">те же места, что и у Камуи; <strong>единственный</strong> способ получить
+                технику — узла в дереве у неё нет</td>
+              <td class="num">30 %</td>
+            </tr>
+            <tr>
+              <td><strong>Свиток Расэнсюрикена</strong> <span class="mono small">scroll_rasenshuriken</span></td>
+              <td>3</td>
+              <td class="small">те же места, что и у Камуи</td>
+              <td class="num">30 %</td>
+            </tr>
+            <tr>
+              <td><strong>Свиток Риннегана</strong> <span class="mono small">scroll_rinnegan</span></td>
+              <td>3</td>
+              <td class="small">те же места, что и у Камуи, плюс сундук священного дерева</td>
+              <td class="num">30 %</td>
+            </tr>
+            <tr>
+              <td><strong>Свиток Чибаку Тенсэй</strong> <span class="mono small">scroll_chibaku_tensei</span></td>
+              <td>3</td>
+              <td class="small">те же места, что и у Камуи, плюс сундук священного дерева</td>
+              <td class="num">30 %</td>
+            </tr>
+            <tr>
+              <td><strong>Свиток Шарингана</strong> <span class="mono small">scroll_sharingan</span></td>
+              <td>3</td>
+              <td class="small">те же места, что и у Риннегана</td>
+              <td class="num">30 %</td>
+            </tr>
+            <tr>
+              <td><strong>Свиток Бьякугана</strong> <span class="mono small">scroll_byakugan</span></td>
+              <td>3</td>
+              <td class="small">те же места, что и у Риннегана</td>
+              <td class="num">30 %</td>
+            </tr>
+            <tr>
+              <td><strong>Свиток Джоугана</strong> <span class="mono small">scroll_jougan</span></td>
+              <td>3</td>
+              <td class="small">те же места, что и у Риннегана</td>
+              <td class="num">30 %</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="small muted">Шанс — базовый; удача (Luck) прибавляет по 5–8 % за уровень. В сундук
+        попадает один свиток за раз. Кроме свитков в сундуки подмешиваются <strong>товары ниндзя</strong>
+        (печати, пилюли, материалы) и <strong>реликвии</strong> (броня и повязки).</p>
+      <p>Кроме ванильных сундуков свитки лежат в <a href="world.html#structures">сундуках мода</a>:
+        священное дерево отдаёт свиток высшей техники с шансом 60 %, руины — свиток тира 1–3 с шансом
+        35 %. Капитан патруля роняет свиток за каждое убийство, а разгром рейда приносит свиток высшей
+        техники один раз за рейд.</p>
+      <p><strong>Свитки можно выловить.</strong> Рыбалка изредка приносит «Свиток Расенгана», «Свиток
+        Стены Земли» или «Свиток Режима Мудреца» — базовый шанс 1 %, и удача (Luck) помогает так же,
+        как в сундуках. Это отдельная строка добычи: улов не заменяется, свиток просто добавляется
+        к нему.</p>
+    </section>
+
+    <section id="misc">
+      <h2 id="s-misc">Прочее</h2>
+      <div class="tbl-wrap">
+        <table class="tbl tbl--compact">
+          <thead>
+            <tr><th>Предмет</th><th>Что это</th><th>Крафт</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Обрывок карты</strong> <span class="mono small">treasure_map</span></td>
+              <td class="small">Кусок чужой карты. ПКМ превращает его в настоящую заполненную карту с
+                меткой ближайшей деревни, заброшенной шахты, затонувшего корабля, руин портала,
+                океанских руин, священного дерева или руин мода (поиск до 120 чанков). Если рядом
+                ничего нет, обрывок не тратится. Находится в сундуках вместе с остальными товарами
+                ниндзя.</td>
+              <td class="small">не крафтится</td>
+            </tr>
+            <tr>
+              <td><strong>Книга шиноби</strong> <span class="mono small">Shinobi Handbook</span></td>
+              <td class="small">Ванильная записанная книга, которую выдаёт сервер, когда игрок впервые
+                становится ниндзя: шесть страниц о клавишах, чакре, дереве навыков, клонах, свитках и
+                званиях. Читается в обычном книжном экране, страницы — на языке игрока. Выбросить можно;
+                повторно не выдаётся.</td>
+              <td class="small">не крафтится</td>
+            </tr>
+            <tr>
+              <td><strong>Пластинка</strong> <span class="mono small">lonely_march</span></td>
+              <td class="small">«Sekwah — Lonely March», 46 секунд, редкость RARE. Играется в
+                проигрывателе.</td>
+              <td class="small">бумага + чернильный мешок + золотой слиток</td>
+            </tr>
+            <tr>
+              <td><strong>Дерево Бонсай</strong> <span class="mono small">bonsai_tree</span></td>
+              <td class="small">Декоративный блок-миниатюра дерева в горшке.</td>
+              <td class="small">цветочный горшок + дубовый саженец</td>
+            </tr>
+            <tr>
+              <td><strong>Компас чакры</strong> <span class="mono small">chakra_compass</span></td>
+              <td class="small">ПКМ по блоку в пределах 32 блоков привязывает компас к точке; стрелка
+                ведёт к ней в любом измерении, в подсказке видны координаты и измерение. Shift + ПКМ
+                сбрасывает привязку. Стек 1.</td>
+              <td class="small">компас + аметистовый осколок + лазурит</td>
+            </tr>
+            <tr>
+              <td><strong>Свиток-верстак</strong> <span class="mono small">scroll_workbench</span></td>
+              <td class="small">ПКМ открывает обычную сетку крафта 3×3 — с книгой рецептов и всеми
+                рецептами, как у настоящего верстака. Сам свиток не тратится. Стек 1; печь или
+                наковальню он не заменяет.</td>
+              <td class="small">верстак + 2 бумаги + чакра-печать</td>
+            </tr>
+            <tr>
+              <td><strong>Оборванная записка</strong> <span class="mono small">ninja_note</span></td>
+              <td class="small">ПКМ читает одну случайную строку из шести — заметки других синоби.
+                В выживании после чтения сгорает, в креативе остаётся. Стек 16, не крафтится: 25 % в
+                восьми видах сундуков (данж, шахта, пирамида, храм, корабль, иглу, аванпост, особняк),
+                по 1–2 штуки.</td>
+              <td class="small">не крафтится</td>
+            </tr>
+            <tr>
+              <td><strong>Утяжелители</strong> <span class="mono small">training_weights</span></td>
+              <td class="small">Тренировочный груз: пока лежит в инвентаре, каждый утяжелитель снимает
+                5 % скорости и добавляет 10 % к расходу стамины. Максимум два — подробности ниже.
+                Стек 2.</td>
+              <td class="small"><code>I I<br>L L<br>I I</code> <span class="muted">(I — железо, L —
+                кожа)</span></td>
+            </tr>
+            <tr>
+              <td><strong>Печать-сторож</strong> <span class="mono small">sentry_seal</span></td>
+              <td class="small">Блок-«сигнализация»: плоская печать на пол. Раз в секунду проверяет
+                враждебных мобов в радиусе 16 блоков (ключ <code>sentrySealRadius</code>, 4–64) и при
+                обнаружении звенит и сыплет искрами — не чаще раза в 3 секунды. Работает, только пока
+                чанк загружен; ломается легко.</td>
+              <td class="small">чакра-печать + аметистовый осколок</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 id="weights">Утяжелители</h3>
+      <ul>
+        <li><strong>Их не надевают, а носят:</strong> считается всё, что лежит в инвентаре, — и в
+          хотбаре, и в рюкзаке. Отдельного слота нет, снимать перед техникой ничего не нужно.</li>
+        <li><strong>Один утяжелитель</strong> — −5 % скорости и +10 % к расходу стамины,
+          <strong>два</strong> — −10 % и +20 %. Больше двух не действует: предмет и стакается ровно
+          по два.</li>
+        <li><strong>Эффект живёт, пока груз в инвентаре.</strong> Выбросил или положил в сундук —
+          штраф исчез сразу; в файл игрока он не пишется и после смерти/перезахода не «залипает».</li>
+        <li><strong>Зачем:</strong> это единственный способ тренировать выносливость — каждый шаг и
+          каждая техника стоят дороже, а скорость передвижения ниже. Подсказка предмета показывает
+          проценты для того стака, что в руке.</li>
+      </ul>
+
+      <h3 id="paintings">Картины</h3>
+      <p>Три варианта картины мода. Они появляются, когда вешаешь обычную «Картину», и используют
+        ванильные текстуры — то есть перерисовываются ресурспаком без правок кода.</p>
+      <div class="tbl-wrap">
+        <table class="tbl tbl--compact">
+          <thead>
+            <tr><th>Картина</th><th>ID</th><th class="num">Размер</th><th>Автор</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Свиток тренировки</strong></td><td class="mono small">training_scroll</td><td class="num">2 × 2</td><td class="small">Неизвестный синоби</td></tr>
+            <tr><td><strong>Раменная</strong></td><td class="mono small">ramen_stand</td><td class="num">2 × 1</td><td class="small">Неизвестный синоби</td></tr>
+            <tr><td><strong>Долина в конце</strong></td><td class="mono small">valley_end</td><td class="num">4 × 2</td><td class="small">Неизвестный синоби</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>В креативе предметы мода разложены по четырём вкладкам: <strong>Ninja Weapons</strong> (всё
+        оружие, бумажная и дымовая бомбы, отравленные иглы, свиток-верстак, записка и утяжелители),
+        <strong>Ninja Armor</strong> (маски, жилеты, броня АНБУ, плащ Акацуки), <strong>Ninja
+        Headbands</strong> (все 27 повязок) и <strong>Ninja Materials</strong> (ткани, пластины,
+        пилюли, вся ниндзя-кухня, чакра-печать, печать-сторож, батарея, кристалл, компас, свитки
+        техник и обрывок карты). Пластинка лежит в ванильных Tools &amp; Utilities, бонсай — в Natural
+        Blocks, картины — в ванильной вкладке картин.</p>
+      <div class="callout callout--warn">
+        <div class="callout__title">Часть предметов не переведена на русский</div>
+        <p>В <code>ru_ru.json</code> нет строк для: катаны, тканей и их производных, пластин брони,
+          обоих жилетов, брони АНБУ, плаща Акацуки, пластинки и <strong>24 из 27 повязок</strong>
+          (переведены только три «пустые»). В игре эти предметы показываются английскими именами —
+          это состояние мода, а не настройка клиента.</p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<footer class="site-foot">
+  <div class="site-foot__inner">
+    <div class="site-foot__col">
+      <div class="site-foot__title">Вики</div>
+      <a href="index.html">Обзор</a>
+      <a href="install.html">Установка</a>
+      <a href="basics.html">Основы</a>
+      <a href="techniques.html">Техники</a>
+    </div>
+    <div class="site-foot__col">
+      <div class="site-foot__title">Развитие</div>
+      <a href="clones.html">Клоны и рабочие</a>
+      <a href="skills.html">Дерево скилов</a>
+      <a href="mastery.html">Освоение</a>
+    </div>
+    <div class="site-foot__col">
+      <div class="site-foot__title">Справочник</div>
+      <a href="items.html">Предметы и рецепты</a>
+      <a href="world.html">Мир и Камуи</a>
+      <a href="config.html">Настройки</a>
+      <a href="faq.html">Вопросы</a>
+    </div>
+    <div class="site-foot__col">
+      <div class="site-foot__title">Ссылки</div>
+      <a href="https://github.com/StandarterDF/Naruto-Mod" rel="noopener">Исходники форка</a>
+      <a href="https://github.com/sekwah41/Naruto-Mod" rel="noopener">Оригинал Sekwah</a>
+    </div>
+  </div>
+  <div class="site-foot__tail">
+    Naruto Mod 1.9.0 · Minecraft 1.20.1 · Forge 47.1.62. Вики собрана по коду мода; на серверах
+    с изменённым конфигом числа могут отличаться.
+  </div>
+</footer>
+</body>
+</html>

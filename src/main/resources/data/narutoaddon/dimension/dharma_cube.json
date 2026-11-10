@@ -1,0 +1,10 @@
+{
+  "type": "narutoaddon:dharma_cube",
+  "generator": {
+    "type": "narutoaddon:dharma_cube",
+    "biome_source": {
+      "type": "minecraft:fixed",
+      "biome": "minecraft:the_void"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "type": "narutoaddon:kamui",
+  "generator": {
+    "type": "narutoaddon:kamui_pillars",
+    "biome_source": {
+      "type": "minecraft:fixed",
+      "biome": "minecraft:the_void"
+    }
+  }
+}

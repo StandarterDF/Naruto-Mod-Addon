@@ -1,0 +1,24 @@
+{
+  "type": "narutoaddon:add_loot",
+  "conditions": [
+    {
+      "condition": "minecraft:any_of",
+      "terms": [
+        { "condition": "forge:loot_table_id", "loot_table_id": "minecraft:archaeology/trail_ruins_common" },
+        { "condition": "forge:loot_table_id", "loot_table_id": "minecraft:archaeology/desert_pyramid" },
+        { "condition": "forge:loot_table_id", "loot_table_id": "minecraft:archaeology/desert_well" },
+        { "condition": "forge:loot_table_id", "loot_table_id": "minecraft:archaeology/ocean_ruin_warm" },
+        { "condition": "forge:loot_table_id", "loot_table_id": "minecraft:archaeology/ocean_ruin_cold" }
+      ]
+    }
+  ],
+  "entries": [
+    { "item": "narutoaddon:scroll_byakugan", "weight": 2 },
+    { "item": "narutoaddon:chakra_crystal", "weight": 5 },
+    { "item": "narutoaddon:military_pills", "weight": 6 }
+  ],
+  "chance": 0.18,
+  "luck_bonus": 0.04,
+  "min": 1,
+  "max": 1
+}

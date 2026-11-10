@@ -1,0 +1,16 @@
+{
+  "replace": false,
+  "entries": [
+    "narutoaddon:scrolls_tier1",
+    "narutoaddon:scrolls_tier2",
+    "narutoaddon:scrolls_tier3",
+    "narutoaddon:scrolls_end",
+    "narutoaddon:scrolls_fishing",
+    "narutoaddon:archaeology_common",
+    "narutoaddon:archaeology_rare",
+    "narutoaddon:notes",
+    "narutoaddon:goods",
+    "narutoaddon:relics",
+    "narutoaddon:barter"
+  ]
+}

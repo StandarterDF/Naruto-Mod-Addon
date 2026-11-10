@@ -1,0 +1,123 @@
+package com.sekwah.narutoaddon.network;
+
+import com.sekwah.narutoaddon.network.c2s.*;
+import com.sekwah.narutoaddon.network.s2c.ClientTestPacket;
+import com.sekwah.narutoaddon.network.s2c.ClientboundCameraPacket;
+import com.sekwah.narutoaddon.network.s2c.ClientboundFriendNoticePacket;
+import com.sekwah.narutoaddon.network.s2c.ClientboundFriendsPacket;
+import com.sekwah.narutoaddon.network.s2c.ClientboundOreSensePacket;
+import com.sekwah.narutoaddon.network.s2c.ClientboundOreVeinPacket;
+import com.sekwah.narutoaddon.network.s2c.ClientboundRevealPacket;
+import com.sekwah.narutoaddon.network.s2c.ClientboundSensingPacket;
+import com.sekwah.narutoaddon.network.s2c.ClientboundThreatDropsPacket;
+import com.sekwah.narutoaddon.network.s2c.ClientboundSizePacket;
+import com.sekwah.narutoaddon.network.s2c.ClientboundSupplyChestPacket;
+import com.sekwah.narutoaddon.network.s2c.ClientboundWorldDominionPacket;
+import com.sekwah.narutoaddon.NarutoAddonMod;
+import com.sekwah.narutoaddon.network.s2c.ClientboundAddonDataPacket;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.network.simple.SimpleChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class PacketHandler {
+
+    /** Singleton-style handle used by some call sites; delegates to the static channel. */
+    public static final PacketHandler INSTANCE = new PacketHandler();
+
+    private static final Logger LOGGER = LoggerFactory.getLogger("NarutoMod:PacketHandler");
+
+    /**
+     * Forces the mod to have the same version as the server.
+     */
+    public static final String PROTOCOL_VERSION = ModList.get().getModFileById(NarutoAddonMod.MOD_ID).versionString();
+
+    public static final SimpleChannel NARUTO_CHANNEL = NetworkRegistry.ChannelBuilder
+            .named(new ResourceLocation(NarutoAddonMod.MOD_ID, "naruto_data"))
+            .networkProtocolVersion(() -> PROTOCOL_VERSION)
+            .clientAcceptedVersions(version -> {
+                if (version.equals(PROTOCOL_VERSION)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            })
+            .serverAcceptedVersions(version -> {
+                if (version.equals(PROTOCOL_VERSION)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            })
+            .simpleChannel();
+
+    public static void init() {
+        // Server to client packs
+        NARUTO_CHANNEL.registerMessage(getPacketID(), ClientTestPacket.class, ClientTestPacket::encode, ClientTestPacket::decode, ClientTestPacket.Handler::handle);
+        NARUTO_CHANNEL.registerMessage(getPacketID(), ClientboundSupplyChestPacket.class, ClientboundSupplyChestPacket::encode, ClientboundSupplyChestPacket::decode, ClientboundSupplyChestPacket.Handler::handle);
+        NARUTO_CHANNEL.registerMessage(getPacketID(), ClientboundWorldDominionPacket.class, ClientboundWorldDominionPacket::encode, ClientboundWorldDominionPacket::decode, ClientboundWorldDominionPacket.Handler::handle);
+        NARUTO_CHANNEL.registerMessage(getPacketID(), ClientboundAddonDataPacket.class, ClientboundAddonDataPacket::encode, ClientboundAddonDataPacket::decode, ClientboundAddonDataPacket.Handler::handle);
+        NARUTO_CHANNEL.registerMessage(getPacketID(), ClientboundSensingPacket.class, ClientboundSensingPacket::encode, ClientboundSensingPacket::decode, ClientboundSensingPacket.Handler::handle);
+        NARUTO_CHANNEL.registerMessage(getPacketID(), ClientboundThreatDropsPacket.class, ClientboundThreatDropsPacket::encode, ClientboundThreatDropsPacket::decode, ClientboundThreatDropsPacket.Handler::handle);
+        NARUTO_CHANNEL.registerMessage(getPacketID(), ClientboundSizePacket.class, ClientboundSizePacket::encode, ClientboundSizePacket::decode, ClientboundSizePacket.Handler::handle);
+        NARUTO_CHANNEL.registerMessage(getPacketID(), ClientboundOreSensePacket.class, ClientboundOreSensePacket::encode, ClientboundOreSensePacket::decode, ClientboundOreSensePacket.Handler::handle);
+        NARUTO_CHANNEL.registerMessage(getPacketID(), ClientboundOreVeinPacket.class, ClientboundOreVeinPacket::encode, ClientboundOreVeinPacket::decode, ClientboundOreVeinPacket.Handler::handle);
+        NARUTO_CHANNEL.registerMessage(getPacketID(), ClientboundRevealPacket.class, ClientboundRevealPacket::encode, ClientboundRevealPacket::decode, ClientboundRevealPacket.Handler::handle);
+        NARUTO_CHANNEL.registerMessage(getPacketID(), ClientboundFriendsPacket.class, ClientboundFriendsPacket::encode, ClientboundFriendsPacket::decode, ClientboundFriendsPacket.Handler::handle);
+        NARUTO_CHANNEL.registerMessage(getPacketID(), ClientboundCameraPacket.class, ClientboundCameraPacket::encode, ClientboundCameraPacket::decode, ClientboundCameraPacket.Handler::handle);
+        NARUTO_CHANNEL.registerMessage(getPacketID(), ClientboundFriendNoticePacket.class, ClientboundFriendNoticePacket::encode, ClientboundFriendNoticePacket::decode, ClientboundFriendNoticePacket.Handler::handle);
+
+        // Client to server packets
+        NARUTO_CHANNEL.registerMessage(getPacketID(), ServerJutsuCastingPacket.class, ServerJutsuCastingPacket::encode, ServerJutsuCastingPacket::decode, ServerJutsuCastingPacket.Handler::handle);
+        NARUTO_CHANNEL.registerMessage(getPacketID(), ServerAbilityActivatePacket.class, ServerAbilityActivatePacket::encode, ServerAbilityActivatePacket::decode, ServerAbilityActivatePacket.Handler::handle);
+        NARUTO_CHANNEL.registerMessage(getPacketID(), ServerAbilityChannelPacket.class, ServerAbilityChannelPacket::encode, ServerAbilityChannelPacket::decode, ServerAbilityChannelPacket.Handler::handle);
+        NARUTO_CHANNEL.registerMessage(getPacketID(), ServerToggleNinjaPacket.class, ServerToggleNinjaPacket::encode, ServerToggleNinjaPacket::decode, ServerToggleNinjaPacket.Handler::handle);
+        NARUTO_CHANNEL.registerMessage(getPacketID(), ServerSupplyChestScrollPacket.class, ServerSupplyChestScrollPacket::encode, ServerSupplyChestScrollPacket::decode, ServerSupplyChestScrollPacket.Handler::handle);
+        NARUTO_CHANNEL.registerMessage(getPacketID(), ServerboundSizeScrollPacket.class, ServerboundSizeScrollPacket::encode, ServerboundSizeScrollPacket::decode, ServerboundSizeScrollPacket.Handler::handle);
+        NARUTO_CHANNEL.registerMessage(getPacketID(), ServerUnlockSkillPacket.class, ServerUnlockSkillPacket::encode, ServerUnlockSkillPacket::decode, ServerUnlockSkillPacket.Handler::handle);
+        NARUTO_CHANNEL.registerMessage(getPacketID(), ServerBuySkillPointsPacket.class, ServerBuySkillPointsPacket::encode, ServerBuySkillPointsPacket::decode, ServerBuySkillPointsPacket.Handler::handle);
+        NARUTO_CHANNEL.registerMessage(getPacketID(), ServerFriendActionPacket.class, ServerFriendActionPacket::encode, ServerFriendActionPacket::decode, ServerFriendActionPacket.Handler::handle);
+        NARUTO_CHANNEL.registerMessage(getPacketID(), ServerWorldDominionPacket.class, ServerWorldDominionPacket::encode, ServerWorldDominionPacket::decode, ServerWorldDominionPacket.Handler::handle);
+        NARUTO_CHANNEL.registerMessage(getPacketID(), ServerToggleAbilityDisabledPacket.class, ServerToggleAbilityDisabledPacket::encode, ServerToggleAbilityDisabledPacket::decode, ServerToggleAbilityDisabledPacket.Handler::handle);
+    }
+
+    private static int packetId = 0;
+    /**
+     * When called grabs a new packet id and increments.
+     *
+     * Only really usable because we force the mods to have to be the same version via PROTOCOL_VERSION
+     * @return
+     */
+    private static int getPacketID() {
+        return packetId++;
+    }
+
+
+    public void send(net.minecraftforge.network.PacketDistributor.PacketTarget target, Object msg) {
+        NARUTO_CHANNEL.send(target, msg);
+    }
+
+    public static void sendToServer(Object obj) {
+        NARUTO_CHANNEL.sendToServer(obj);
+    }
+
+    // These are for handling from server side to players.
+    public static void sendToPlayer(Object obj, ServerPlayer player) {
+        NARUTO_CHANNEL.sendTo(obj, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
+    }
+
+    public static void sentToTrackingAndSelf(Object obj, ServerPlayer player) {
+        NARUTO_CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), obj);
+    }
+
+    public static void sentToTracking(Object obj, Entity entity) {
+        NARUTO_CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity), obj);
+    }
+
+}

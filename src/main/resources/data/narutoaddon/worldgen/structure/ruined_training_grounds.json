@@ -1,0 +1,8 @@
+{
+  "type": "narutoaddon:dungeon",
+  "variant": "ruined_training_grounds",
+  "biomes": "#narutoaddon:has_structure/naruto_dungeons",
+  "step": "surface_structures",
+  "spawn_overrides": {},
+  "terrain_adaptation": "beard_thin"
+}

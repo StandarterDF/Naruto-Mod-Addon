@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "narutoaddon:jutsu_casting",
+    "narutoaddon:jutsu_boom",
+    "narutoaddon:leap",
+    "narutoaddon:double_jump"
+  ]
+}

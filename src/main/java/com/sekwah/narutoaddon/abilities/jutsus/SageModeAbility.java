@@ -1,0 +1,556 @@
+package com.sekwah.narutoaddon.abilities.jutsus;
+
+import com.sekwah.narutoaddon.abilities.ToggleState;
+import com.sekwah.narutoaddon.abilities.Ability;
+import com.sekwah.narutoaddon.abilities.NarutoAbilities;
+import com.sekwah.narutoaddon.abilities.mastery.Mastery;
+import com.sekwah.narutoaddon.capabilities.INinjaData;
+import com.sekwah.narutoaddon.config.NarutoConfig;
+import com.sekwah.narutoaddon.registries.NarutoRegistries;
+import com.sekwah.narutoaddon.skills.SkillEffect;
+import com.sekwah.narutoaddon.skills.SkillTree;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.common.ForgeMod;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
+/**
+ * Sage mode: the gathered nature energy is opened up and burned, turning the caster into something
+ * faster, stronger and harder to put down for as long as it lasts.
+ *
+ * <p>The mode is not on a timer, it is on the pool. Every tick it takes nature energy, and when the
+ * pool is empty the mode closes on its own - so how long a sage lasts is decided entirely by how long
+ * they stood still beforehand, which is the trade the whole branch of techniques is built on. Death
+ * and logging out also end it: the state is deliberately kept out of the save file.</p>
+ *
+ * <p>The maintenance lives in {@link #maintain(Player, INinjaData)}, called every tick from
+ * {@code PlayerEvents#onEntityUpdate}, in the same way the eight gates are kept alive.</p>
+ */
+public class SageModeAbility extends Ability {
+    /**
+     * How far a cast of this technique carries as a game event. Silent: nothing here disturbs the world.
+     */
+    @Override
+    public int noiseRadius() {
+        return 0;
+    }
+
+
+    /**
+     * V B V B C V - sage mode is the deep end of the branch, so it asks for a longer seal than the
+     * gathering that feeds it. The old three-key combination now belongs to the chakra shield.
+     */
+    public static final long COMBO = 331L;
+
+    /** The registry id of this technique, which is also the key its mastery is stored under. */
+    public static final ResourceLocation ID = new ResourceLocation("narutomod", "sage_mode");
+
+    /** Nature energy needed to open the mode at all. */
+    public static final float MIN_SENIN = 50.0f;
+
+    /** Where the frog-transformation counter lives on the player. */
+    private static final String FROG_COUNT_TAG = "narutomod:sage_frog_count";
+
+    /**
+     * Where the re-entry lockout ends, in game time. The body that has just been torn out of the mode
+     * by an empty pool cannot simply be filled up again and dropped straight back in: it needs to
+     * settle first, and how long that takes is the same progression the rest of the mode lives on.
+     */
+    private static final String REENTRY_UNTIL_TAG = "narutomod:sage_reentry_until";
+
+    /** Ticks the body needs before the mode can be opened again after a dry-pool exit. */
+    private static final int REENTRY_LOCK_BEGINNER = 20 * 180;
+    private static final int REENTRY_LOCK_MASTER = 20 * 30;
+
+    /**
+     * The short wait a caster always pays after letting the mode go on purpose. Releasing it cleanly
+     * is not the same as being torn out of it, so the price is flat: fifteen seconds, whatever the
+     * mastery, just long enough that the recast is not a free flicker.
+     */
+    private static final int REENTRY_LOCK_VOLUNTARY = 20 * 15;
+
+    /** How many times a dry pool turns the sage into a frog before the mode can be released. */
+    private static final int FROG_TRANSFORMATIONS = 3;
+
+    /** Nature energy burned every tick the mode is up at full mastery (a full 100 is a bit over four minutes). */
+    private static final float DRAIN_PER_TICK = 0.02f;
+
+    /**
+     * How much faster a beginner burns through nature energy. Holding it is a skill: someone who has
+     * barely opened the mode once cannot keep it steady and it slips away quickly, while a master
+     * holds the same pool for many times as long. This is the progression the mode lives on - the
+     * duration grows with every use, on top of the perks below unlocking one by one.
+     *
+     * <p>At twelve times the base burn, a full hundred energy is about twenty seconds of mode for a
+     * beginner and half that off the fifty it takes to open at all, which is the ten to twenty second
+     * window the mode is meant to sit in until it is practised.</p>
+     */
+    private static final float BEGINNER_DRAIN_MULTIPLIER = 12.0f;
+
+    /** Chakra the mode feeds its caster every tick, from a trickle at the start to a steady flow. */
+    private static final float CHAKRA_PER_TICK_MIN = 0.15f;
+    private static final float CHAKRA_PER_TICK_MAX = 0.5f;
+
+    /** Stamina the mode gives back every second, five times the base trickle. */
+    private static final float STAMINA_REGEN_PER_SECOND = 2.0f;
+
+    /** How long the effects are handed out for; refreshed every tick, so this is just a hold time. */
+    private static final int EFFECT_DURATION = 200;
+
+    /**
+     * Mastery at which each of the mode's perks first appears, and where the two that grow get their
+     * second step. A beginner who barely holds the mode gets nothing but a little speed and a slower
+     * burn; strength, then toughness, then the leap and finally regeneration are all earned by using
+     * it. This is deliberate - opening the gate for the first time should not hand over the whole
+     * list at once.
+     */
+    private static final float SPEED_UP_AT = 0.6f;
+    private static final float STRENGTH_AT = 0.15f;
+    private static final float STRENGTH_UP_AT = 0.6f;
+    private static final float RESISTANCE_AT = 0.35f;
+    private static final float JUMP_AT = 0.5f;
+
+    /** Mastery from which the mode starts closing its own wounds. */
+    private static final float REGENERATION_AT = 0.5f;
+
+    /**
+     * Healing is paid on a beat of {@link #REGENERATION_INTERVAL} ticks rather than every tick: the
+     * amount is large enough to read on the bar at once, but the beat is short enough that it still
+     * climbs smoothly. The rate is deliberately low - a sage mends, but slower than a fight hits.
+     */
+    private static final float REGENERATION_PER_BEAT = 0.4f;
+
+    /** How often the mode gives back {@link #REGENERATION_PER_BEAT} health, in ticks. */
+    private static final int REGENERATION_INTERVAL = 4;
+
+    /** How much further a sage's arm reaches while the mode is up. */
+    private static final double REACH_BONUS = 1.0d;
+
+    /** Stable id, so the same reach modifier is added and taken off rather than stacking. */
+    private static final UUID REACH_MODIFIER_ID = UUID.fromString("7a3f1c2e-9b4d-4e6a-8c5f-1a2b3c4d5e6f");
+
+    /** How often the body shrugs off a lingering ailment, in ticks. */
+    private static final int CLEANSE_INTERVAL = 40;
+
+    /** How often the senjutsu perception repaints its targets, in ticks. */
+    private static final int SENSE_INTERVAL = 20;
+
+    /** How long the perception glow lasts; refreshed every {@link #SENSE_INTERVAL}. */
+    private static final int SENSE_DURATION = 40;
+
+    /** Perception radius: deliberately short, so the sage's sense is not a second Byakugan. */
+    private static final double SENSE_RADIUS = 15.0d;
+    private static final double SENSE_RADIUS_MASTER = 15.0d;
+
+    /** Mastery at which the perception widens to its full reach. */
+    private static final float SENSE_UP_AT = 0.85f;
+
+    /** Standing still this long counts as rooted, doubling the perception radius. */
+    private static final int STILL_TICKS = 20;
+
+    /** Squared distance per tick under which the caster counts as not moving. */
+    private static final double STILL_SLOP_SQR = 0.0225d;
+
+    private static final String STILL_X_TAG = "narutomod:sage_still_x";
+    private static final String STILL_Z_TAG = "narutomod:sage_still_z";
+    private static final String STILL_TICKS_TAG = "narutomod:sage_still_ticks";
+
+    /** Ailments nature does not tolerate, shrugged off one at a time. */
+    private static final MobEffect[] CLEANSE_EFFECTS = {
+            MobEffects.POISON, MobEffects.WITHER, MobEffects.BLINDNESS,
+            MobEffects.CONFUSION, MobEffects.MOVEMENT_SLOWDOWN, MobEffects.WEAKNESS
+    };
+
+    @Override
+    public ActivationType activationType() {
+        return ActivationType.INSTANT;
+    }
+
+    /**
+     * Sage mode is entered and left with the same cast, so it is a stance in all but name and is
+     * controlled from the jutsu menu like one.
+     */
+    @Override
+    public boolean isMenuControllable() {
+        return true;
+    }
+
+    @Override
+    public long defaultCombo() {
+        return COMBO;
+    }
+
+    @Override
+    public boolean handleCost(Player player, INinjaData ninjaData, int chargeAmount) {
+        if (!NarutoConfig.sageModeEnabled) {
+            player.displayClientMessage(Component.translatable("jutsu.fail.sage.disabled",
+                    Component.translatable(this.getTranslationKey(ninjaData)).withStyle(ChatFormatting.YELLOW))
+                    .withStyle(ChatFormatting.RED), true);
+            return false;
+        }
+        if (ninjaData.isSageMode()) {
+            // The first three times nature energy runs dry the body turns into a frog on its own.
+            // Until that has happened three times the mode cannot be released by hand: the sage has
+            // not learned to let go of it yet.
+            if (player.getPersistentData().getInt(FROG_COUNT_TAG) < FROG_TRANSFORMATIONS) {
+                player.displayClientMessage(Component.translatable("jutsu.fail.sage.cannot_exit")
+                        .withStyle(ChatFormatting.RED), true);
+                return false;
+            }
+            // After the third transformation the mode is let go the same way it is opened.
+            return true;
+        }
+        // A body that was torn out of the mode by an empty pool has to settle before it can hold the
+        // power again. Checked before the pool itself, because the wait is the reason the caster
+        // cannot step back in even once the energy is there - and the answer says how long.
+        // Deliberately not applied to a recast that lets the mode go on purpose: running dry and
+        // releasing it cleanly are priced differently.
+        int wait = reentryWaitTicks(player);
+        if (wait > 0) {
+            player.displayClientMessage(Component.translatable("jutsu.fail.sage.reentry",
+                    Component.translatable(this.getTranslationKey(ninjaData)).withStyle(ChatFormatting.YELLOW),
+                    (wait + 19) / 20).withStyle(ChatFormatting.RED), true);
+            return false;
+        }
+        if (ninjaData.getSeninMana() < entryThreshold(ninjaData)) {
+            player.displayClientMessage(Component.translatable("jutsu.fail.senin.notenough",
+                    Component.translatable(this.getTranslationKey(ninjaData)).withStyle(ChatFormatting.YELLOW),
+                    (int) entryThreshold(ninjaData)).withStyle(ChatFormatting.RED), true);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * The re-entry lockout a caster still has to sit out, in ticks, or zero when the body is ready.
+     */
+    public static int reentryWaitTicks(Player player) {
+        long until = player.getPersistentData().getLong(REENTRY_UNTIL_TAG);
+        long now = player.level().getGameTime();
+        return until <= now ? 0 : (int) Math.min(Integer.MAX_VALUE, until - now);
+    }
+
+    /**
+     * Sets the lockout the dry-pool exit earns. A beginner who has barely held the mode needs three
+     * minutes to settle; a master whose body knows it needs half a minute.
+     */
+    private static void lockReentryAfterDryPool(Player player, INinjaData ninjaData) {
+        int wait = Math.round(Mth.lerp(Mastery.level(ninjaData, ID), REENTRY_LOCK_BEGINNER, REENTRY_LOCK_MASTER));
+        lockReentry(player, wait);
+    }
+
+    /** Sets the flat wait a deliberate release always earns, whatever the mastery. */
+    private static void lockReentryAfterRelease(Player player) {
+        lockReentry(player, REENTRY_LOCK_VOLUNTARY);
+    }
+
+    private static void lockReentry(Player player, int ticks) {
+        player.getPersistentData().putLong(REENTRY_UNTIL_TAG,
+                player.level().getGameTime() + Math.max(0, ticks));
+    }
+
+    /**
+     * Nature energy needed to open the mode. It starts at {@link #MIN_SENIN} and the sage branch's
+     * entry node shaves it down, so a practiced sage needs to hold less before they can step in.
+     */
+    public static float entryThreshold(INinjaData ninjaData) {
+        float reduction = SkillTree.bonus(ninjaData.getSkillData().getUnlocked(), SkillEffect.SAGE_ENTRY);
+        return MIN_SENIN * Math.max(0.0f, 1.0f - reduction);
+    }
+
+    @Override
+    public void performServer(Player player, INinjaData ninjaData, int ticksActive) {
+        if (ninjaData.isSageMode()) {
+            // Same guard as handleCost: a menu toggle must not slip past the first three frog
+            // transformations either.
+            if (player.getPersistentData().getInt(FROG_COUNT_TAG) < FROG_TRANSFORMATIONS) {
+                player.displayClientMessage(Component.translatable("jutsu.fail.sage.cannot_exit")
+                        .withStyle(ChatFormatting.RED), true);
+                return;
+            }
+            // Letting the mode go on purpose still costs a short wait, but far less than running dry:
+            // releasing it cleanly is not the same as being torn out of it.
+            lockReentryAfterRelease(player);
+            end(player, ninjaData);
+            return;
+        }
+        ninjaData.setSageMode(true);
+        player.displayClientMessage(Component.translatable("jutsu.sage.start").withStyle(ChatFormatting.GREEN), true);
+        if (player.level() instanceof ServerLevel level) {
+            level.playSound(null, player, SoundEvents.CONDUIT_ACTIVATE, SoundSource.PLAYERS, 0.8f, 1.0f);
+        }
+    }
+
+    /**
+     * The opening and the closing both say themselves, so the generic "you cast X" line is dropped to
+     * keep the recast that lets go of the mode from reading as if it had just cast it.
+     */
+    @Override
+    public boolean logInChat() {
+        return false;
+    }
+
+    /**
+     * Closes the mode and takes its perks back off. Used both when the pool finally runs dry and when
+     * the caster releases it with a recast.
+     */
+    private static void end(Player player, INinjaData ninjaData) {
+        ninjaData.setSageMode(false);
+        clearPerks(player);
+        player.displayClientMessage(Component.translatable("jutsu.sage.end").withStyle(ChatFormatting.YELLOW), true);
+    }
+
+    /**
+     * Drops every stance the caster is holding in one sweep. A body that has just turned into a frog
+     * cannot keep a single one of them up - no dojutsu, no flight, no shell, no open gate - so the
+     * whole toggle set is walked on a copy: ending one stance may end another, and walking the live
+     * set while it shrinks would throw. The endings go through {@link Ability.HandleEnded} rather
+     * than a bare set removal, so everything a stance borrowed (flight, spheres, buffs, modifiers)
+     * is handed back properly instead of being left on the player.
+     */
+    private static void stripAllModes(Player player, INinjaData ninjaData) {
+        Set<ResourceLocation> active = new HashSet<>(ninjaData.getToggleAbilityData().getAbilitiesHashSet());
+        for (ResourceLocation id : active) {
+            // A stance already closed by one of the endings above is skipped, so no ending runs
+            // twice on the same ability.
+            if (!ToggleState.isActive(ninjaData, id)) {
+                continue;
+            }
+            Ability ability = NarutoRegistries.ABILITIES.getValue(id);
+            if (ability != null) {
+                ninjaData.getToggleAbilityData().removeAbilityEnded(player, ninjaData, ability);
+            } else {
+                // Gone from the registry: there is nothing to end, so the stale id is just dropped.
+                ninjaData.getToggleAbilityData().removeAbility(id);
+            }
+        }
+    }
+
+    /**
+     * The mode is not mastered by opening it: opening it costs nothing to master and a bare
+     * activation is not the work. It is mastered by holding it, so the credit is paid tick by tick in
+     * {@link #maintain} instead and this deliberately records nothing. See
+     * {@link Ability#MASTERY_CREDIT_PER_TICK}.
+     */
+    @Override
+    public void recordMastery(Player player, INinjaData ninjaData) {
+    }
+
+    /**
+     * Nature energy burned every tick the mode is up, for the caster's current mastery. Shared with
+     * the HUD, which turns it into the "seconds left" the bar is really about.
+     */
+    public static float currentDrain(INinjaData ninjaData) {
+        float mastery = Mastery.level(ninjaData, ID);
+        return DRAIN_PER_TICK * Mth.lerp(mastery, BEGINNER_DRAIN_MULTIPLIER, 1.0f);
+    }
+
+    /**
+     * Keeps a sage a sage: drained, fed, buffed and lit up, every server tick.
+     *
+     * <p>How long a sage lasts and how much they get out of the mode both ride on mastery. The burn
+     * starts steep and eases off with every use, so a beginner's hold is short and a master's is long,
+     * and the effects below are handed out one at a time rather than all at once. The buffs are given
+     * a short hold and refreshed, and are cleared outright the moment the mode closes, so none of them
+     * hang around after the pool runs dry.</p>
+     */
+    public static void maintain(Player player, INinjaData ninjaData) {
+        if (!ninjaData.isSageMode()) {
+            return;
+        }
+        float mastery = Mastery.level(ninjaData, ID);
+        float drain = currentDrain(ninjaData);
+        ninjaData.addSeninMana(-drain);
+        if (ninjaData.getSeninMana() <= 0.0f) {
+            ninjaData.setSeninMana(0.0f);
+            // The first three times a sage's nature energy runs dry, the body reverts to a frog
+            // for a minute - the price of drawing on the toads' power without mastering it.
+            int frogCount = player.getPersistentData().getInt(FROG_COUNT_TAG);
+            if (frogCount < FROG_TRANSFORMATIONS) {
+                player.getPersistentData().putInt(FROG_COUNT_TAG, frogCount + 1);
+                // The frog takes the body over, and a frog holds nothing: every stance is closed
+                // first, then both pools are emptied. The stances have to go before end() below,
+                // which is what turns the mode itself off, so a mode that cannot be held alongside
+                // the toad does not survive in the toggle set.
+                stripAllModes(player, ninjaData);
+                ninjaData.setChakra(0.0f);
+                ninjaData.setSeninMana(0.0f);
+                ninjaData.setHengeTarget("");
+                ninjaData.setHengeEntityType("minecraft:frog");
+                ninjaData.setHengeName("Frog");
+                ninjaData.setHengeTicks(20 * 60);
+            }
+            // Running dry tears the mode out and leaves the body unsettled: a scaled wait follows, from
+            // three minutes at no mastery down to half a minute for a master. A deliberate release
+            // pays the flat fifteen seconds in performServer instead.
+            lockReentryAfterDryPool(player, ninjaData);
+            end(player, ninjaData);
+            return;
+        }
+
+        ninjaData.addChakra(Mth.lerp(mastery, CHAKRA_PER_TICK_MIN, CHAKRA_PER_TICK_MAX));
+        applyPerks(player, mastery);
+        if (NarutoConfig.sageBuffsEnabled) {
+            applyBody(player, ninjaData, mastery);
+            if (player.tickCount % 20 == 0) {
+                ninjaData.addStamina(STAMINA_REGEN_PER_SECOND);
+            }
+        }
+        if (NarutoConfig.sageKataEnabled) {
+            applyReach(player);
+        } else {
+            removeReach(player);
+        }
+        // Mastery is paid for the time the mode is actually held, not for the act of opening it.
+        NarutoAbilities.SAGE_MODE.get().recordMasteryCredit(player, ninjaData, MASTERY_CREDIT_PER_TICK);
+
+        if (player.tickCount % 4 == 0 && player.level() instanceof ServerLevel level) {
+            level.sendParticles(ParticleTypes.HAPPY_VILLAGER, player.getX(),
+                    player.getY() + 1.0d, player.getZ(), 4, 0.4d, 0.7d, 0.4d, 0.02d);
+        }
+    }
+
+    /**
+     * The body a sage wears: hunger held still, ailments shrugged off and monsters felt through
+     * walls. All of it is in the mode and none of it survives it - the food bar is pinned rather
+     * than filled, so nothing is gained to keep.
+     */
+    private static void applyBody(Player player, INinjaData ninjaData, float mastery) {
+        // Nature feeds its own: exhaustion is wiped every tick, so the hunger bar never drains while
+        // the mode is up and a sage can fight on rations they already ate. Saturation is held at
+        // zero on purpose: with a fed saturation bar vanilla mends a point every few ticks from food
+        // alone, which would drown out the mode's own slow trickle.
+        player.getFoodData().setSaturation(0.0f);
+        player.getFoodData().setExhaustion(0.0f);
+
+        trackStillness(player);
+
+        // Poison does not live in a sage: one lingering ailment every two seconds, never the fire.
+        if (player.tickCount % CLEANSE_INTERVAL == 0) {
+            for (MobEffect effect : CLEANSE_EFFECTS) {
+                if (player.hasEffect(effect)) {
+                    player.removeEffect(effect);
+                    break;
+                }
+            }
+        }
+
+        // Senjutsu perception: hostile monsters glow through walls, but only in a short fifteen-block
+        // feeling. It deliberately does not grow with mastery or standing still, so it stays a close
+        // sense rather than a second Byakugan.
+        if (player.tickCount % SENSE_INTERVAL == 0 && player.level() instanceof ServerLevel level) {
+            double radius = mastery >= SENSE_UP_AT ? SENSE_RADIUS_MASTER : SENSE_RADIUS;
+            List<Mob> felt = level.getEntitiesOfClass(Mob.class,
+                    player.getBoundingBox().inflate(radius),
+                    mob -> mob.isAlive()
+                            && mob.getType().getCategory() == MobCategory.MONSTER);
+            for (Mob mob : felt) {
+                mob.addEffect(new MobEffectInstance(MobEffects.GLOWING, SENSE_DURATION, 0, false, false));
+            }
+        }
+    }
+
+    /**
+     * Hands out the perks of the mode that the caster has earned so far. Speed is always there, the
+     * rest arrive as mastery grows, and the two that scale step up a second time later on.
+     */
+    private static void applyPerks(Player player, float mastery) {
+        int speed = mastery >= SPEED_UP_AT ? 1 : 0;
+        player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, EFFECT_DURATION, speed, true, false));
+        if (mastery >= STRENGTH_AT) {
+            int strength = mastery >= STRENGTH_UP_AT ? 1 : 0;
+            player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, EFFECT_DURATION, strength, true, false));
+        }
+        if (mastery >= RESISTANCE_AT) {
+            player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, EFFECT_DURATION, 0, true, false));
+        }
+        if (mastery >= JUMP_AT) {
+            player.addEffect(new MobEffectInstance(MobEffects.JUMP, EFFECT_DURATION, 0, true, false));
+        }
+        if (mastery >= REGENERATION_AT) {
+            // Mending is its own trickle rather than the regeneration effect: a fraction of a point
+            // on a short beat reads as a body slowly closing over, where the effect arrives whole.
+            if (player.tickCount % REGENERATION_INTERVAL == 0 && player.getHealth() < player.getMaxHealth()) {
+                player.heal(REGENERATION_PER_BEAT);
+            }
+        }
+    }
+
+    /** Takes every buff of the mode back off when it ends. */
+    private static void clearPerks(Player player) {
+        player.removeEffect(MobEffects.MOVEMENT_SPEED);
+        player.removeEffect(MobEffects.DAMAGE_BOOST);
+        player.removeEffect(MobEffects.DAMAGE_RESISTANCE);
+        player.removeEffect(MobEffects.JUMP);
+        removeReach(player);
+    }
+
+    /**
+     * A sage's arm is a block longer than it should be. A transient attribute, re-applied every
+     * tick so a lost modifier comes back, and taken off with everything else when the mode ends.
+     */
+    private static void applyReach(Player player) {
+        AttributeInstance reach = player.getAttribute(ForgeMod.ENTITY_REACH.get());
+        if (reach != null && reach.getModifier(REACH_MODIFIER_ID) == null) {
+            reach.addTransientModifier(new AttributeModifier(REACH_MODIFIER_ID,
+                    "narutomod:sage_reach", REACH_BONUS, AttributeModifier.Operation.ADDITION));
+        }
+    }
+
+    /** Takes the longer arm back off when the mode ends or is switched off in the config. */
+    private static void removeReach(Player player) {
+        AttributeInstance reach = player.getAttribute(ForgeMod.ENTITY_REACH.get());
+        if (reach != null) {
+            reach.removeModifier(REACH_MODIFIER_ID);
+        }
+    }
+
+    /**
+     * Counts how long the caster has stood on one spot, for the rooted perception. Movement over a
+     * sixth of a block resets the count; anything under it lets it grow, capped well past caring.
+     */
+    private static void trackStillness(Player player) {
+        CompoundTag data = player.getPersistentData();
+        double x = player.getX();
+        double z = player.getZ();
+        if (!data.contains(STILL_X_TAG)) {
+            data.putDouble(STILL_X_TAG, x);
+            data.putDouble(STILL_Z_TAG, z);
+            data.putInt(STILL_TICKS_TAG, 0);
+            return;
+        }
+        double dx = x - data.getDouble(STILL_X_TAG);
+        double dz = z - data.getDouble(STILL_Z_TAG);
+        if (dx * dx + dz * dz > STILL_SLOP_SQR) {
+            data.putDouble(STILL_X_TAG, x);
+            data.putDouble(STILL_Z_TAG, z);
+            data.putInt(STILL_TICKS_TAG, 0);
+        } else if (data.getInt(STILL_TICKS_TAG) < 72000) {
+            data.putInt(STILL_TICKS_TAG, data.getInt(STILL_TICKS_TAG) + 1);
+        }
+    }
+
+    /** @return ticks since the caster last moved, for anything that rewards holding ground. */
+    static int stillTicks(Player player) {
+        return player.getPersistentData().getInt(STILL_TICKS_TAG);
+    }
+}

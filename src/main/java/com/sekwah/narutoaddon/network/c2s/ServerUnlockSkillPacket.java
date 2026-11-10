@@ -1,0 +1,138 @@
+package com.sekwah.narutoaddon.network.c2s;
+
+import com.sekwah.narutoaddon.abilities.AbilityUnlocks;
+import com.sekwah.narutoaddon.capabilities.INinjaData;
+import com.sekwah.narutoaddon.capabilities.NinjaCapabilityHandler;
+import com.sekwah.narutoaddon.network.AddonDataSync;
+import com.sekwah.narutoaddon.skills.Skill;
+import com.sekwah.narutoaddon.skills.SkillTree;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraftforge.network.NetworkEvent;
+
+import java.util.function.Supplier;
+
+/**
+ * Buy one node of the skill tree with skill points. The server is the only one that ever spends
+ * points or writes a node down; the screen just asks, and a node it should not have asked for is
+ * simply refused here.
+ */
+public class ServerUnlockSkillPacket {
+
+    private final String skill;
+
+    public ServerUnlockSkillPacket(String skill) {
+        this.skill = skill;
+    }
+
+    public static void encode(ServerUnlockSkillPacket msg, FriendlyByteBuf outBuffer) {
+        outBuffer.writeUtf(msg.skill);
+    }
+
+    public static ServerUnlockSkillPacket decode(FriendlyByteBuf inBuffer) {
+        return new ServerUnlockSkillPacket(inBuffer.readUtf());
+    }
+
+    public static class Handler {
+        public static void handle(ServerUnlockSkillPacket msg, Supplier<NetworkEvent.Context> ctx) {
+            ctx.get().enqueueWork(() -> {
+                ServerPlayer player = ctx.get().getSender();
+                if (player == null) {
+                    return;
+                }
+                player.getCapability(NinjaCapabilityHandler.NINJA_DATA).ifPresent(ninjaData -> {
+                    Skill skill = SkillTree.byPath(msg.skill);
+                    if (skill == null) {
+                        return;
+                    }
+                    if (!ninjaData.isNinjaModeEnabled()) {
+                        player.displayClientMessage(Component.translatable("jutsu.not_a_ninja")
+                                .withStyle(ChatFormatting.RED), true);
+                        return;
+                    }
+                    if (SkillTree.isUnlocked(ninjaData.getSkillData().getUnlocked(), skill)) {
+                        return;
+                    }
+                    if (!SkillTree.prerequisitesMet(skill, ninjaData.getSkillData().getUnlocked())) {
+                        player.displayClientMessage(Component.translatable("naruto.skill.fail.prereq",
+                                Component.translatable(skill.nameKey())).withStyle(ChatFormatting.RED), true);
+                        return;
+                    }
+                    if (skill.isUnlock()) {
+                        String base = AbilityUnlocks.baseRequirement(skill.unlock());
+                        if (base != null && !SkillTree.hasUnlock(ninjaData.getSkillData().getUnlocked(), base)) {
+                            Skill baseSkill = SkillTree.byUnlock(base);
+                            Component baseName = baseSkill != null
+                                    ? Component.translatable(baseSkill.nameKey())
+                                    : Component.literal(base);
+                            player.displayClientMessage(Component.translatable("naruto.skill.fail.base_required",
+                                    baseName).withStyle(ChatFormatting.RED), true);
+                            return;
+                        }
+                    }
+                    if (skill.requiresScroll() && !ninjaData.getSkillData().hasScroll(skill.scrollKnowledge())) {
+                        player.displayClientMessage(Component.translatable("naruto.skill.fail.scroll",
+                                Component.translatable(skill.nameKey())).withStyle(ChatFormatting.RED), true);
+                        return;
+                    }
+                    if (skill.isUnlock() && ("ability:kamui".equals(skill.unlock())
+                            || "ability:kamui_phasing".equals(skill.unlock()))) {
+                        if (!SkillTree.hasUnlock(ninjaData.getSkillData().getUnlocked(), "ability:sharingan")) {
+                            player.displayClientMessage(Component.translatable("naruto.skill.fail.sharingan")
+                                    .withStyle(ChatFormatting.RED), true);
+                            return;
+                        }
+                    }
+                    if (skill.isUnlock() && "ability:six_paths_mode".equals(skill.unlock())) {
+                        if (!SkillTree.hasUnlock(ninjaData.getSkillData().getUnlocked(), "ability:rinnegan")) {
+                            player.displayClientMessage(Component.translatable("naruto.skill.fail.rinnegan")
+                                    .withStyle(ChatFormatting.RED), true);
+                            return;
+                        }
+                    }
+                    if (skill.isUnlock() && "ability:rinnegan".equals(skill.unlock())) {
+                        if (!SkillTree.hasUnlock(ninjaData.getSkillData().getUnlocked(), "ability:sharingan")) {
+                            player.displayClientMessage(Component.translatable("naruto.skill.fail.sharingan")
+                                    .withStyle(ChatFormatting.RED), true);
+                            return;
+                        }
+                        boolean hasMangekyo = SkillTree.hasUnlock(ninjaData.getSkillData().getUnlocked(), "ability:tsukuyomi")
+                                || SkillTree.hasUnlock(ninjaData.getSkillData().getUnlocked(), "ability:susanoo")
+                                || SkillTree.hasUnlock(ninjaData.getSkillData().getUnlocked(), "ability:izanagi")
+                                || SkillTree.hasUnlock(ninjaData.getSkillData().getUnlocked(), "ability:izanami");
+                        if (!hasMangekyo) {
+                            player.displayClientMessage(Component.translatable("naruto.skill.fail.sharingan")
+                                    .withStyle(ChatFormatting.RED), true);
+                            return;
+                        }
+                    }
+                    int held = ninjaData.getSkillData().getPoints();
+                    if (held < skill.cost()) {
+                        player.displayClientMessage(Component.translatable("naruto.skill.fail.points",
+                                Component.literal(String.format("%,d", skill.cost() - held))
+                                        .withStyle(ChatFormatting.GOLD)).withStyle(ChatFormatting.RED), true);
+                        return;
+                    }
+                    buy(player, ninjaData, skill);
+                });
+            });
+            ctx.get().setPacketHandled(true);
+        }
+
+        private static void buy(ServerPlayer player, INinjaData ninjaData, Skill skill) {
+            if (!ninjaData.getSkillData().spendPoints(skill.cost())) {
+                return;
+            }
+            ninjaData.getSkillData().unlock(skill.id());
+            player.level().playSound(null, player, SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 0.6f, 1.4f);
+            player.displayClientMessage(Component.translatable("naruto.skill.unlocked",
+                    Component.translatable(skill.nameKey()).withStyle(ChatFormatting.GOLD))
+                    .withStyle(ChatFormatting.GREEN), false);
+            AddonDataSync.send(player);
+        }
+    }
+}

@@ -1,0 +1,18 @@
+{
+  "parent": "forge:item/default",
+  "loader": "forge:separate_transforms",
+  "base": {
+    "parent": "narutomod:item/samehada_model"
+  },
+  "perspectives": {
+    "gui": {
+      "parent": "narutomod:item/samehada_flat"
+    },
+    "ground": {
+      "parent": "narutomod:item/samehada_flat"
+    },
+    "fixed": {
+      "parent": "narutomod:item/samehada_flat"
+    }
+  }
+}

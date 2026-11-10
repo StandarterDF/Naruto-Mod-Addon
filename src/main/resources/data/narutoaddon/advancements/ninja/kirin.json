@@ -1,0 +1,26 @@
+{
+  "display": {
+    "icon": {
+      "item": "narutoaddon:scroll_kirin"
+    },
+    "title": {
+      "translate": "advancements.narutoaddon.ninja.kirin.title"
+    },
+    "description": {
+      "translate": "advancements.narutoaddon.ninja.kirin.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "cast": {
+      "trigger": "narutoaddon:jutsu_cast",
+      "conditions": {
+        "ability": "narutoaddon:kirin"
+      }
+    }
+  },
+  "parent": "narutoaddon:ninja/first_jutsu"
+}

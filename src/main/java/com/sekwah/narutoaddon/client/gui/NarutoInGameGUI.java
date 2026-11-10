@@ -1,0 +1,149 @@
+package com.sekwah.narutoaddon.client.gui;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
+import org.joml.Matrix4f;
+import com.sekwah.narutoaddon.capabilities.NinjaCapabilityHandler;
+import com.sekwah.narutoaddon.client.ClientOreSenseData;
+import com.sekwah.narutoaddon.client.ClientSensingData;
+import com.sekwah.narutoaddon.client.renderer.OreSenseRenderer;
+import com.sekwah.narutoaddon.client.renderer.SensingEspRenderer;
+import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
+import net.minecraftforge.client.event.RenderLevelStageEvent;
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+
+
+/**
+ * The addon's in-game HUD.
+ *
+ * <p>Only the overlays the base mod does not have are built here: the sage nature bar, the chakra
+ * sense, the eye and the absorbed jutsu readouts. Chakra, stamina, substitutions and world markers
+ * are drawn by the base mod's own {@code NarutoInGameGUI} from the same capability, so duplicating
+ * them here would paint every bar twice.</p>
+ */
+public class NarutoInGameGUI {
+
+    private final SeninGUI seninOverlay;
+    private final SensingGUI sensingOverlay;
+    private final SharinganGUI sharinganOverlay;
+    private final AbsorptionGUI absorptionOverlay;
+    private final Minecraft minecraft;
+
+    private final PlayerGUI[] overlays;
+
+    /**
+     * Will be false if the entity is not a ninja
+     */
+    private boolean shouldRender;
+
+    private static Matrix4f worldMatrix;
+    private static Vec3 cameraPos;
+
+    public NarutoInGameGUI(){
+        this.minecraft = Minecraft.getInstance();
+        this.seninOverlay = new SeninGUI(this.minecraft);
+        this.sensingOverlay = new SensingGUI(this.minecraft);
+        this.sharinganOverlay = new SharinganGUI(this.minecraft);
+        this.absorptionOverlay = new AbsorptionGUI(this.minecraft);
+
+        this.overlays = new PlayerGUI[]{this.seninOverlay, this.sensingOverlay, this.sharinganOverlay,
+                this.absorptionOverlay};
+
+        MinecraftForge.EVENT_BUS.addListener(this::renderGameOverlay);
+        MinecraftForge.EVENT_BUS.addListener(this::clientTickEvent);
+        MinecraftForge.EVENT_BUS.addListener(this::renderLevelLast);
+        MinecraftForge.EVENT_BUS.addListener(SensingEspRenderer::renderLevel);
+        MinecraftForge.EVENT_BUS.addListener(OreSenseRenderer::renderLevel);
+    }
+
+    // TODO switch over to new renderer
+//    @SubscribeEvent
+//    public void registerOverlays(RegisterGuiOverlaysEvent event) {
+//        for (var overlay : this.overlays) {
+//            event.registerAboveAll("test", overlay);
+//        }
+//    }
+
+
+    /**
+     * Builds the HUD and hangs it on the forge bus. Called once from client setup; the listener
+     * references live on the instance, so it is kept in this static field rather than dropped.
+     */
+    private static NarutoInGameGUI instance;
+
+    public static void registerEvents() {
+        if (instance == null) {
+            instance = new NarutoInGameGUI();
+        }
+    }
+
+    @SubscribeEvent
+    public void clientTickEvent(TickEvent.ClientTickEvent event) {
+        // The chakra sense is a picture drawn on the caster's own client, refreshed before anything
+        // is rendered from it. It only needs the caster, the player branch below covers it.
+        ClientSensingData.tick(this.minecraft);
+        ClientOreSenseData.tick(this.minecraft);
+        if(this.minecraft.getCameraEntity() instanceof Player player) {
+            player.getCapability(NinjaCapabilityHandler.NINJA_DATA).ifPresent(ninjaData -> {
+                shouldRender = ninjaData.isNinjaModeEnabled();
+            });
+            for (PlayerGUI  overlay : overlays) {
+                overlay.tick(player);
+            }
+        } else {
+            shouldRender = false;
+        }
+    }
+
+    /**
+     * THIS SHOULD NOT BE DONE THIS WAY, TAKE A LOOK AT THE NEW RegisterGuiOverlaysEvent
+     *
+     * This was just a quick fix for now so I could focus on updating other parts.
+     *
+     * @deprecated
+     * @param event
+     */
+    @SubscribeEvent
+    public void renderGameOverlay(RenderGuiOverlayEvent.Post event) {
+        if(event.getOverlay() != VanillaGuiOverlay.HOTBAR.type()) {
+            return;
+        }
+        if(!shouldRender) {
+            return;
+        }
+        if(Minecraft.getInstance().options.hideGui) {
+            return;
+        }
+        GuiGraphics guiGraphics = event.getGuiGraphics();
+        for (PlayerGUI  overlay : overlays) {
+            overlay.render(guiGraphics, worldMatrix, cameraPos);
+        }
+    }
+
+    @SubscribeEvent
+    public void renderLevelLast(RenderLevelStageEvent event) {
+        if(event.getStage() != RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS) {
+            return;
+        }
+        Minecraft mc = Minecraft.getInstance();
+        if(mc.options.hideGui || mc.level == null || mc.player == null) {
+            return;
+        }
+        Camera camera = mc.getEntityRenderDispatcher().camera;
+        //noinspection ConstantConditions the IDE inspects this as not possible to be null. There has been at least one error report proving this to be false.
+        if(camera == null) return;
+        PoseStack poseStack = event.getPoseStack();
+        worldMatrix = new Matrix4f(event.getProjectionMatrix());
+        worldMatrix.mul(poseStack.last().pose());
+        cameraPos = camera.getPosition();
+        //float partialTicks = event.getPartialTick();
+        //MultiBufferSource multiBufferSource = mc.renderBuffers().bufferSource();
+    }
+}

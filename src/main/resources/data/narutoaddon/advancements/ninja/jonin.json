@@ -1,0 +1,32 @@
+{
+  "display": {
+    "icon": {
+      "item": "narutomod:anbu_armor"
+    },
+    "title": {
+      "translate": "advancements.narutoaddon.ninja.jonin.title"
+    },
+    "description": {
+      "translate": "advancements.narutoaddon.ninja.jonin.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "jonin": {
+      "trigger": "narutoaddon:ninja_rank",
+      "conditions": {
+        "rank": "jonin"
+      }
+    }
+  },
+  "parent": "narutoaddon:ninja/chunin",
+  "rewards": {
+    "recipes": [
+      "narutoaddon:samehada",
+      "narutomod:katana"
+    ]
+  }
+}
